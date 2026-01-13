@@ -13,20 +13,23 @@ interface ProjectCardProps {
   isScoringOpen: boolean
 }
 
-export default function ProjectCard({ project, currentUser, initialScore = 0, isScoringOpen }: ProjectCardProps) {
-  const [score, setScore] = useState(initialScore)
+export default function ProjectCard({ project, currentUser, initialScore, isScoringOpen }: ProjectCardProps) {
+  const hasExistingScore = initialScore !== undefined && initialScore !== null
+  const [score, setScore] = useState(hasExistingScore ? initialScore : 0)
+  const [savedScore, setSavedScore] = useState<number | null>(hasExistingScore ? initialScore : null)
   const [isSaving, setIsSaving] = useState(false)
-  const [isSaved, setIsSaved] = useState(!!initialScore)
+  const [isSaved, setIsSaved] = useState(hasExistingScore)
   const [error, setError] = useState('')
 
   const hasConflict = project.department === currentUser.department
 
   const handleScoreChange = async (newVal: number) => {
     setScore(newVal)
-    setIsSaved(false)
-    // Debounce save or save on separate button?
-    // For mobile, maybe auto-save with debounce is better, but explicit submit is safer.
-    // Let's do explicit save button for now, or auto-save after 1s.
+    if (isSaved) {
+       // If we were saved, we are now potentially "unsaved" relative to the last saved value
+       // But we keep isSaved=true to show "Update" button instead of "Submit"
+       // We'll rely on the comparison with savedScore for the disabled state
+    }
   }
 
   const handleSubmit = async () => {
@@ -41,6 +44,7 @@ export default function ProjectCard({ project, currentUser, initialScore = 0, is
         value: score
       })
       setIsSaved(true)
+      setSavedScore(score)
     } catch (err: any) {
       setError('Failed to save')
     } finally {
@@ -101,7 +105,7 @@ export default function ProjectCard({ project, currentUser, initialScore = 0, is
               {isSaved && <span className="text-green-600 text-xs font-medium">Saved</span>}
               <button
                 onClick={handleSubmit}
-                disabled={isSaving || (isSaved && score === initialScore)}
+                disabled={isSaving || (isSaved && score === savedScore)}
                 className={clsx(
                   "px-4 py-2 rounded text-sm font-medium transition-colors",
                   isSaved
