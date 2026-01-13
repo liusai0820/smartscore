@@ -1,36 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SmartScore - Internal Project Scoring System
 
-## Getting Started
+A real-time scoring application for internal project reviews.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Reviewer Interface (Mobile-First):**
+  - Secure login with name and passcode.
+  - List of projects to score.
+  - Conflict of interest detection (cannot score own department).
+  - 0-100 scoring with visual feedback.
+
+- **Admin Dashboard:**
+  - Control scoring state (CLOSED -> SCORING -> REVEALED).
+  - Live progress monitoring.
+  - Bulk data upload (JSON).
+
+- **Live Display:**
+  - Big-screen ready view.
+  - Shows real-time voting activity during SCORING.
+  - Reveals weighted rankings with animations when REVEALED.
+
+## Tech Stack
+
+- **Framework:** Next.js 15 (App Router)
+- **Database:** SQLite (dev) / Prisma ORM
+- **Styling:** Tailwind CSS
+- **Language:** TypeScript
+
+## Setup & Running
+
+1. **Install Dependencies:**
+   ```bash
+   npm install
+   ```
+
+2. **Initialize Database:**
+   ```bash
+   npx prisma generate
+   npx prisma db push
+   ```
+
+3. **Run Development Server:**
+   ```bash
+   npm run dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000).
+
+## Usage Guide
+
+### 1. Seed Data (Admin)
+Go to `/admin` and paste the seed JSON in the upload box.
+Example format:
+```json
+{
+  "users": [
+    { "name": "Alice", "role": "LEADER", "department": "Management", "passcode": "1234" },
+    { "name": "Bob", "role": "DEPT_HEAD", "department": "Tech", "passcode": "1234" }
+  ],
+  "projects": [
+    { "name": "Project Alpha", "department": "Tech", "presenter": "Charlie" },
+    { "name": "Project Beta", "department": "Sales", "presenter": "Dana" }
+  ]
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Start Scoring (Admin)
+- On `/admin`, click **START SCORING**.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Reviewers Vote
+- Reviewers go to `/login`, select their name, enter passcode.
+- They submit scores for projects (except their own department).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. Live Display
+- Open `/display` on a shared screen. It will show voting progress.
 
-## Learn More
+### 5. Reveal Results
+- On `/admin`, click **REVEAL RESULTS**.
+- The display page will show the final ranked list with weighted scores.
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Scoring Logic
+Final Score = `(LeaderAvg * 0.6) + (DeptHeadAvg * 0.4)`

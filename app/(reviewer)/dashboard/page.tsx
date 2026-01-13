@@ -1,12 +1,12 @@
 import { prisma } from '@/lib/db'
-import { getCurrentUser, logoutUser } from '@/lib/auth'
+import { getCurrentUser, clearSession } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import ProjectCard from '@/components/ui/ProjectCard'
 import { headers } from 'next/headers'
 
 async function LogoutButton() {
   'use server'
-  await logoutUser()
+  await clearSession()
   redirect('/login')
 }
 

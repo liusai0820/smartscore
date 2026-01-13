@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
-import { loginUser } from '@/lib/auth'
+import { setSession } from '@/lib/auth'
 
 export async function POST(request: Request) {
   try {
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
       )
     }
 
-    await loginUser(user.id)
+    await setSession(user.id)
 
     return NextResponse.json({
       user: {

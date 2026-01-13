@@ -3,10 +3,13 @@ import { prisma } from '@/lib/db'
 
 export const COOKIE_NAME = 'smartscore_user_id'
 
-export async function getCurrentUser() {
+export async function getSession() {
   const cookieStore = await cookies()
-  const userId = cookieStore.get(COOKIE_NAME)?.value
+  return cookieStore.get(COOKIE_NAME)?.value
+}
 
+export async function getCurrentUser() {
+  const userId = await getSession()
   if (!userId) return null
 
   try {
@@ -15,11 +18,12 @@ export async function getCurrentUser() {
     })
     return user
   } catch (error) {
+    console.error('Error fetching current user:', error)
     return null
   }
 }
 
-export async function loginUser(userId: string) {
+export async function setSession(userId: string) {
   const cookieStore = await cookies()
   // Set cookie for 1 day
   cookieStore.set(COOKIE_NAME, userId, {
@@ -31,7 +35,7 @@ export async function loginUser(userId: string) {
   })
 }
 
-export async function logoutUser() {
+export async function clearSession() {
   const cookieStore = await cookies()
   cookieStore.delete(COOKIE_NAME)
 }
