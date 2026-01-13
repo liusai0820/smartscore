@@ -22,20 +22,24 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json()
-    const { projectId, value } = body
+    const { projectId, valueScore, innovScore, feasiScore, outputScore } = body
 
-    if (!projectId || typeof value !== 'number') {
+    // Validate input - 4 dimension scores (1-10)
+    if (!projectId) {
       return NextResponse.json(
-        { error: 'Invalid input' },
+        { error: 'Project ID is required' },
         { status: 400 }
       )
     }
 
-    if (value < 0 || value > 100) {
-      return NextResponse.json(
-        { error: 'Score must be between 0 and 100' },
-        { status: 400 }
-      )
+    const scores = { valueScore, innovScore, feasiScore, outputScore }
+    for (const [key, val] of Object.entries(scores)) {
+      if (typeof val !== 'number' || val < 1 || val > 10) {
+        return NextResponse.json(
+          { error: `${key} must be a number between 1 and 10` },
+          { status: 400 }
+        )
+      }
     }
 
     // Check project existence
@@ -55,7 +59,7 @@ export async function POST(request: Request) {
       )
     }
 
-    // Upsert score
+    // Upsert score with 4 dimensions
     const score = await prisma.score.upsert({
       where: {
         userId_projectId: {
@@ -63,11 +67,19 @@ export async function POST(request: Request) {
           projectId: projectId
         }
       },
-      update: { value },
+      update: {
+        valueScore,
+        innovScore,
+        feasiScore,
+        outputScore
+      },
       create: {
         userId: user.id,
         projectId: projectId,
-        value
+        valueScore,
+        innovScore,
+        feasiScore,
+        outputScore
       }
     })
 

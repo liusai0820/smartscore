@@ -6,39 +6,66 @@ async function ensureConfig() {
   const state = await prisma.config.findUnique({ where: { key: 'scoring_state' } })
   if (!state) {
     await prisma.config.create({
-      data: { key: 'scoring_state', value: 'CLOSED' } // Default state
+      data: { key: 'scoring_state', value: 'CLOSED' }
     })
   }
 }
 
 export async function GET() {
   await ensureConfig()
-  const state = await prisma.config.findUnique({
-    where: { key: 'scoring_state' }
-  })
+  const [stateConfig, projectConfig] = await Promise.all([
+    prisma.config.findUnique({ where: { key: 'scoring_state' } }),
+    prisma.config.findUnique({ where: { key: 'current_project' } })
+  ])
 
-  return NextResponse.json({ state: state?.value || 'CLOSED' })
+  return NextResponse.json({
+    state: stateConfig?.value || 'CLOSED',
+    currentProjectId: projectConfig?.value || null
+  })
 }
 
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { state } = body
+    const { state, currentProjectId } = body
 
-    if (!['SCORING', 'CLOSED', 'REVEALED'].includes(state)) {
-      return NextResponse.json(
-        { error: 'Invalid state' },
-        { status: 400 }
-      )
+    // Update scoring state if provided
+    if (state !== undefined) {
+      if (!['SCORING', 'CLOSED', 'REVEALED'].includes(state)) {
+        return NextResponse.json(
+          { error: 'Invalid state' },
+          { status: 400 }
+        )
+      }
+      await prisma.config.upsert({
+        where: { key: 'scoring_state' },
+        update: { value: state },
+        create: { key: 'scoring_state', value: state },
+      })
     }
 
-    const updated = await prisma.config.upsert({
-      where: { key: 'scoring_state' },
-      update: { value: state },
-      create: { key: 'scoring_state', value: state },
-    })
+    // Update current project if provided
+    if (currentProjectId !== undefined) {
+      if (currentProjectId === null) {
+        await prisma.config.delete({ where: { key: 'current_project' } }).catch(() => { })
+      } else {
+        await prisma.config.upsert({
+          where: { key: 'current_project' },
+          update: { value: currentProjectId },
+          create: { key: 'current_project', value: currentProjectId },
+        })
+      }
+    }
 
-    return NextResponse.json({ state: updated.value })
+    const [stateConfig, projectConfig] = await Promise.all([
+      prisma.config.findUnique({ where: { key: 'scoring_state' } }),
+      prisma.config.findUnique({ where: { key: 'current_project' } })
+    ])
+
+    return NextResponse.json({
+      state: stateConfig?.value || 'CLOSED',
+      currentProjectId: projectConfig?.value || null
+    })
   } catch (error) {
     return NextResponse.json(
       { error: 'Internal server error' },

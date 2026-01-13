@@ -1,26 +1,319 @@
 @import "tailwindcss";
 
+/* 新中式科技风 - Neo-Chinese Tech Theme */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* 主色调 - 墨玉与朱砂 */
+  --color-ink: #0d1117;
+  --color-ink-light: #161b22;
+  --color-ink-medium: #21262d;
+  --color-ink-soft: #30363d;
+
+  /* 强调色 - 朱砂红与琥珀金 */
+  --color-vermilion: #c53d43;
+  --color-vermilion-light: #e85a5a;
+  --color-amber: #d4a853;
+  --color-amber-glow: #f0c674;
+
+  /* 辅助色 - 青瓷与玉白 */
+  --color-celadon: #5fb3b3;
+  --color-jade: #7ec699;
+  --color-ivory: #f5f1eb;
+  --color-silk: #e8e3db;
+
+  /* 文字色彩 */
+  --color-text-primary: #f5f1eb;
+  --color-text-secondary: #a0a0a0;
+  --color-text-muted: #6e7681;
+
+  /* 背景 */
+  --background: var(--color-ink);
+  --foreground: var(--color-text-primary);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-noto-sans);
+  --font-serif: var(--font-noto-serif);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* 基础样式 */
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-feature-settings: "palt" 1;
+  letter-spacing: 0.02em;
+}
+
+/* 自定义滚动条 - 墨玉风格 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-ink-light);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-ink-soft);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-vermilion);
+}
+
+/* 选中文字样式 */
+::selection {
+  background: var(--color-vermilion);
+  color: var(--color-ivory);
+}
+
+/* 祥云装饰纹样 - SVG背景 */
+.cloud-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 15c-3 0-5.5 2-6.5 5-2-1.5-5-1-6.5 1.5s-1 5.5 1.5 7c-2.5 1.5-3.5 4.5-2.5 7s4 4 6.5 3c1 3 3.5 5 6.5 5s5.5-2 6.5-5c2.5 1 5.5 0 6.5-3s0-5.5-2.5-7c2.5-1.5 3-4.5 1.5-7s-4.5-3-6.5-1.5c-1-3-3.5-5-6.5-5z' fill='none' stroke='%23c53d4315' stroke-width='1'/%3E%3C/svg%3E");
+}
+
+/* 水墨渐变动画 */
+@keyframes ink-flow {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.ink-gradient {
+  background: linear-gradient(
+    135deg,
+    var(--color-ink) 0%,
+    var(--color-ink-light) 25%,
+    var(--color-ink-medium) 50%,
+    var(--color-ink-light) 75%,
+    var(--color-ink) 100%
+  );
+  background-size: 400% 400%;
+  animation: ink-flow 15s ease infinite;
+}
+
+/* 朱砂红渐变 */
+.vermilion-gradient {
+  background: linear-gradient(135deg, var(--color-vermilion) 0%, var(--color-vermilion-light) 100%);
+}
+
+/* 琥珀金渐变 */
+.amber-gradient {
+  background: linear-gradient(135deg, var(--color-amber) 0%, var(--color-amber-glow) 100%);
+}
+
+/* 玉石光泽效果 */
+.jade-glow {
+  box-shadow: 0 0 20px rgba(126, 198, 153, 0.2),
+              inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* 墨框效果 */
+.ink-border {
+  border: 1px solid var(--color-ink-soft);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4),
+              inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* 悬浮卡片效果 */
+.float-card {
+  background: var(--color-ink-light);
+  border: 1px solid var(--color-ink-soft);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+              0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.float-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4),
+              0 0 0 1px rgba(197, 61, 67, 0.3) inset;
+  border-color: var(--color-vermilion);
+}
+
+/* 按钮基础样式 */
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-vermilion) 0%, var(--color-vermilion-light) 100%);
+  color: var(--color-ivory);
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 16px rgba(197, 61, 67, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(197, 61, 67, 0.4);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: var(--color-ink-medium);
+  color: var(--color-text-primary);
+  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--color-ink-soft);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background: var(--color-ink-soft);
+  border-color: var(--color-amber);
+}
+
+/* 输入框样式 */
+.input-field {
+  background: var(--color-ink-medium);
+  border: 1px solid var(--color-ink-soft);
+  color: var(--color-text-primary);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--color-vermilion);
+  box-shadow: 0 0 0 3px rgba(197, 61, 67, 0.2);
+}
+
+.input-field::placeholder {
+  color: var(--color-text-muted);
+}
+
+/* 标签装饰 */
+.label-text {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+/* 状态标签 */
+.status-open {
+  background: linear-gradient(135deg, rgba(126, 198, 153, 0.2) 0%, rgba(95, 179, 179, 0.2) 100%);
+  color: var(--color-jade);
+  border: 1px solid rgba(126, 198, 153, 0.3);
+}
+
+.status-closed {
+  background: rgba(197, 61, 67, 0.15);
+  color: var(--color-vermilion-light);
+  border: 1px solid rgba(197, 61, 67, 0.3);
+}
+
+/* 分数滑块样式 */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-track {
+  background: var(--color-ink-soft);
+  height: 8px;
+  border-radius: 4px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-amber) 0%, var(--color-amber-glow) 100%);
+  border: 3px solid var(--color-ink);
+  box-shadow: 0 2px 8px rgba(212, 168, 83, 0.4);
+  margin-top: -8px;
+  transition: all 0.2s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 16px rgba(212, 168, 83, 0.6);
+}
+
+/* 淡入动画 */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* 脉冲光晕动画 */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(126, 198, 153, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(126, 198, 153, 0.5);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* 数字跳动动画 */
+@keyframes number-pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-number-pop {
+  animation: number-pop 0.3s ease-out;
+}
+
+/* 排名奖牌样式 */
+.medal-gold {
+  background: linear-gradient(135deg, #ffd700 0%, #ffb700 50%, #ff8c00 100%);
+  color: #5a3800;
+  box-shadow: 0 4px 20px rgba(255, 215, 0, 0.4);
+}
+
+.medal-silver {
+  background: linear-gradient(135deg, #e8e8e8 0%, #c0c0c0 50%, #a8a8a8 100%);
+  color: #404040;
+  box-shadow: 0 4px 20px rgba(192, 192, 192, 0.4);
+}
+
+.medal-bronze {
+  background: linear-gradient(135deg, #cd7f32 0%, #b87333 50%, #a0522d 100%);
+  color: #fff5e6;
+  box-shadow: 0 4px 20px rgba(205, 127, 50, 0.4);
 }

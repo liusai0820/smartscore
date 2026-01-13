@@ -31,13 +31,17 @@ model Project {
 }
 
 model Score {
-  id        String   @id @default(uuid())
-  value     Int
-  user      User     @relation(fields: [userId], references: [id])
-  userId    String
-  project   Project  @relation(fields: [projectId], references: [id])
-  projectId String
-  createdAt DateTime @default(now())
+  id          String   @id @default(uuid())
+  // 4维度评分 (1-10分)
+  valueScore  Int      // 研究价值 (30%)
+  innovScore  Int      // 创新性 (25%)
+  feasiScore  Int      // 可行性 (25%)
+  outputScore Int      // 预期成果 (20%)
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  project     Project  @relation(fields: [projectId], references: [id])
+  projectId   String
+  createdAt   DateTime @default(now())
 
   @@unique([userId, projectId])
 }

@@ -21,17 +21,50 @@ function calculateWeightedScore(score: { valueScore: number; innovScore: number;
 
 export async function GET() {
   try {
-    const stateConfig = await prisma.config.findUnique({
-      where: { key: 'scoring_state' }
-    })
-    const isRevealed = stateConfig?.value === 'REVEALED'
+    const [stateConfig, projectConfig] = await Promise.all([
+      prisma.config.findUnique({ where: { key: 'scoring_state' } }),
+      prisma.config.findUnique({ where: { key: 'current_project' } })
+    ])
 
+    const state = stateConfig?.value || 'CLOSED'
+    const currentProjectId = projectConfig?.value || null
+
+    // Get all reviewers
+    const allReviewers = await prisma.user.findMany({
+      orderBy: [{ role: 'asc' }, { id: 'asc' }]
+    })
+
+    // Get current project details if exists
+    let currentProject = null
+    let reviewerStatuses: { id: string; name: string; role: string; department: string; hasVoted: boolean }[] = []
+
+    if (currentProjectId) {
+      currentProject = await prisma.project.findUnique({
+        where: { id: currentProjectId },
+        include: {
+          scores: {
+            select: { userId: true }
+          }
+        }
+      })
+
+      if (currentProject) {
+        const votedUserIds = new Set(currentProject.scores.map(s => s.userId))
+        reviewerStatuses = allReviewers.map(r => ({
+          id: r.id,
+          name: r.name,
+          role: r.role,
+          department: r.department,
+          hasVoted: votedUserIds.has(r.id)
+        }))
+      }
+    }
+
+    // Get all projects with scores for ranking display
     const projects = await prisma.project.findMany({
       include: {
         scores: {
-          include: {
-            user: true
-          }
+          include: { user: true }
         }
       }
     })
@@ -69,24 +102,33 @@ export async function GET() {
         department: project.department,
         presenter: project.presenter,
         scoreCount: project.scores.length,
-        leaderAvg: isRevealed ? leaderAvg : null,
-        deptHeadAvg: isRevealed ? deptHeadAvg : null,
-        finalScore: isRevealed ? finalScore : null,
-        progress: project.scores.length
+        leaderAvg: state === 'REVEALED' ? leaderAvg : null,
+        deptHeadAvg: state === 'REVEALED' ? deptHeadAvg : null,
+        finalScore: state === 'REVEALED' ? finalScore : null
       }
     })
 
-    if (isRevealed) {
+    if (state === 'REVEALED') {
       results.sort((a, b) => (b.finalScore || 0) - (a.finalScore || 0))
     }
 
     return NextResponse.json({
-      state: stateConfig?.value || 'CLOSED',
+      state,
+      currentProject: currentProject ? {
+        id: currentProject.id,
+        name: currentProject.name,
+        department: currentProject.department,
+        presenter: currentProject.presenter,
+        description: currentProject.description
+      } : null,
+      reviewerStatuses,
+      totalReviewers: allReviewers.length,
+      votedCount: reviewerStatuses.filter(r => r.hasVoted).length,
       results
     })
 
   } catch (error) {
-    console.error('Stats error:', error)
+    console.error('Display stats error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

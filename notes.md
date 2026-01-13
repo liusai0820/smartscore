@@ -3,6 +3,7 @@
 ## Findings
 
 ### Requirements
+
 - **Device Support:** Reviewers (Leaders/Dept Heads) will use Mobile/Tablets (likely web-based).
 - **Core Logic:**
   - Different weight coefficients for Leaders vs Dept Heads.
@@ -12,10 +13,12 @@
   - Authentication: Select name from list + simple passcode.
 
 ### Decisions
+
 - **Client:** Mobile-first web app (likely).
 - **Auth:** Low friction (List selection).
 - **Display:** Progress view during scoring -> Reveal button -> Final Ranking. avoid bias.
 
 ### Tech Constraints (To Verify)
+
 - Deployment environment?
 - Preferred language?

@@ -4,6 +4,22 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { clsx } from 'clsx'
 
+type ReviewerStatus = {
+  id: string
+  name: string
+  role: string
+  department: string
+  hasVoted: boolean
+}
+
+type Project = {
+  id: string
+  name: string
+  department: string
+  presenter: string
+  description?: string
+}
+
 type Result = {
   id: string
   name: string
@@ -13,11 +29,14 @@ type Result = {
   leaderAvg: number | null
   deptHeadAvg: number | null
   finalScore: number | null
-  progress: number
 }
 
 type ApiResponse = {
   state: string
+  currentProject: Project | null
+  reviewerStatuses: ReviewerStatus[]
+  totalReviewers: number
+  votedCount: number
   results: Result[]
 }
 
@@ -27,7 +46,7 @@ export default function LiveRanking() {
 
   const fetchData = async () => {
     try {
-      const res = await axios.get('/api/scoring/stats')
+      const res = await axios.get('/api/display/stats')
       setData(res.data)
       setLoading(false)
     } catch (error) {
@@ -37,113 +56,375 @@ export default function LiveRanking() {
 
   useEffect(() => {
     fetchData()
-    const interval = setInterval(fetchData, 3000) // Poll every 3 seconds
+    const interval = setInterval(fetchData, 2000)
     return () => clearInterval(interval)
   }, [])
 
   if (loading && !data) {
     return (
-      <div className="flex items-center justify-center h-screen text-2xl text-gray-500">
-        Loading...
+      <div className="min-h-screen bg-[#0d1117] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto mb-6 rounded-2xl vermilion-gradient flex items-center justify-center animate-pulse">
+            <svg className="w-8 h-8 text-[#f5f1eb]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <p className="text-[#6e7681] text-xl">正在加载数据...</p>
+        </div>
       </div>
     )
   }
 
   const state = data?.state || 'CLOSED'
+  const currentProject = data?.currentProject
+  const reviewerStatuses = data?.reviewerStatuses || []
   const results = data?.results || []
+  const totalReviewers = data?.totalReviewers || 0
+  const votedCount = data?.votedCount || 0
 
-  // Calculate max votes to show progress bars properly (optional, or just show count)
-  // For now, just showing count is fine.
+  // Separate reviewers by role
+  const leaders = reviewerStatuses.filter(r => r.role === 'LEADER')
+  const deptHeads = reviewerStatuses.filter(r => r.role === 'DEPT_HEAD')
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white p-8">
-      <header className="mb-12 text-center">
-        <h1 className="text-5xl font-extrabold tracking-tight mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600">
-          Project Scoring Live
+    <div className="min-h-screen bg-[#0d1117] ink-gradient cloud-pattern text-[#f5f1eb] p-8 overflow-hidden">
+      {/* 装饰性背景 */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-48 -left-48 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-[#c53d43]/10 to-transparent blur-3xl" />
+        <div className="absolute -bottom-48 -right-48 w-[600px] h-[600px] rounded-full bg-gradient-to-tl from-[#d4a853]/10 to-transparent blur-3xl" />
+      </div>
+
+      {/* 头部 */}
+      <header className="relative z-10 mb-8 text-center">
+        <div className="inline-flex items-center gap-4 mb-4">
+          <div className="w-14 h-14 rounded-2xl vermilion-gradient flex items-center justify-center shadow-lg shadow-[#c53d43]/30">
+            <svg className="w-7 h-7 text-[#f5f1eb]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
+
+        <h1 className="text-5xl md:text-6xl font-black tracking-tight mb-4" style={{ fontFamily: 'var(--font-noto-serif)' }}>
+          智<span className="text-[#c53d43]">评</span>
+          <span className="text-[#d4a853] ml-4">Live</span>
         </h1>
-        <div className="inline-block px-6 py-2 rounded-full bg-slate-800 border border-slate-700">
+
+        <div className={clsx(
+          "inline-flex items-center gap-3 px-6 py-3 rounded-full text-lg font-bold",
+          state === 'SCORING' ? "bg-[#7ec699]/15 text-[#7ec699] border border-[#7ec699]/30" :
+          state === 'REVEALED' ? "bg-[#d4a853]/15 text-[#d4a853] border border-[#d4a853]/30" :
+          "bg-[#30363d] text-[#6e7681] border border-[#30363d]"
+        )}>
           <span className={clsx(
-            "text-xl font-bold",
-            state === 'SCORING' ? "text-green-400 animate-pulse" :
-            state === 'REVEALED' ? "text-blue-400" :
-            "text-gray-400"
-          )}>
-            {state === 'SCORING' ? '● VOTING IN PROGRESS' :
-             state === 'REVEALED' ? '★ FINAL RESULTS' :
-             'WAITING TO START'}
-          </span>
+            "w-3 h-3 rounded-full",
+            state === 'SCORING' ? "bg-[#7ec699] animate-pulse" :
+            state === 'REVEALED' ? "bg-[#d4a853]" :
+            "bg-[#6e7681]"
+          )} />
+          {state === 'SCORING' ? '评分进行中' :
+           state === 'REVEALED' ? '最终排名' :
+           '等待开始'}
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto">
+      {/* 主内容区 */}
+      <main className="relative z-10 max-w-7xl mx-auto">
+        {/* 等待状态 */}
         {state === 'CLOSED' && (
-          <div className="text-center py-20">
-            <p className="text-3xl text-gray-500">Please wait for the administrator to open scoring.</p>
+          <div className="text-center py-24">
+            <div className="w-24 h-24 mx-auto mb-8 rounded-2xl bg-[#161b22] border border-[#30363d] flex items-center justify-center">
+              <svg className="w-12 h-12 text-[#30363d]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <p className="text-3xl text-[#6e7681] mb-4">请等待管理员开启评分</p>
+            <p className="text-lg text-[#30363d]">评分开始后，此页面将自动更新</p>
           </div>
         )}
 
+        {/* 评分进行中 - 新的扑克牌样式 */}
         {state === 'SCORING' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {results.map((project) => (
-              <div key={project.id} className="bg-slate-800 rounded-xl p-6 border border-slate-700 shadow-lg transform transition-all hover:scale-105">
-                <h3 className="text-xl font-bold mb-2 truncate" title={project.name}>{project.name}</h3>
-                <p className="text-slate-400 text-sm mb-4">{project.presenter}</p>
-
-                <div className="mt-4">
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-slate-300">Votes Received</span>
-                    <span className="font-bold text-green-400">{project.scoreCount}</span>
+          <div className="space-y-8">
+            {/* 当前项目展示 */}
+            {currentProject ? (
+              <div className="text-center mb-12 animate-fade-in-up">
+                <div className="inline-block">
+                  <div className="text-sm text-[#7ec699] uppercase tracking-widest mb-2 font-medium">
+                    当前评审项目
                   </div>
-                  <div className="w-full bg-slate-700 rounded-full h-3 overflow-hidden">
-                    {/* Animated progress bar purely for visual activity */}
-                    <div
-                      className="bg-gradient-to-r from-green-500 to-emerald-400 h-full rounded-full transition-all duration-1000 ease-out"
-                      style={{ width: `${Math.min(project.scoreCount * 5, 100)}%` }} // Assumes ~20 voters for full bar visual
-                    />
+                  <h2 className="text-4xl md:text-5xl font-black text-[#f5f1eb] mb-4" style={{ fontFamily: 'var(--font-noto-serif)' }}>
+                    {currentProject.name}
+                  </h2>
+                  <div className="flex items-center justify-center gap-4 text-[#6e7681]">
+                    <span className="flex items-center gap-2">
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                      </svg>
+                      {currentProject.department}
+                    </span>
+                    <span className="text-[#30363d]">·</span>
+                    <span className="flex items-center gap-2">
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                      {currentProject.presenter}
+                    </span>
+                  </div>
+                  {currentProject.description && (
+                    <p className="mt-4 text-[#6e7681] max-w-2xl mx-auto">{currentProject.description}</p>
+                  )}
+                </div>
+
+                {/* 进度统计 */}
+                <div className="mt-8 flex items-center justify-center gap-6">
+                  <div className="bg-[#161b22] border border-[#30363d] rounded-2xl px-8 py-4">
+                    <div className="text-5xl font-black text-[#7ec699]">{votedCount}</div>
+                    <div className="text-sm text-[#6e7681]">已评分</div>
+                  </div>
+                  <div className="text-4xl text-[#30363d]">/</div>
+                  <div className="bg-[#161b22] border border-[#30363d] rounded-2xl px-8 py-4">
+                    <div className="text-5xl font-black text-[#6e7681]">{totalReviewers}</div>
+                    <div className="text-sm text-[#6e7681]">总评委</div>
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
+            ) : (
+              <div className="text-center py-12">
+                <div className="text-[#6e7681] text-xl">请在管理端选择当前评审项目</div>
+              </div>
+            )}
 
-        {state === 'REVEALED' && (
-          <div className="space-y-4">
-            {results.map((project, index) => (
-              <div key={project.id} className="relative bg-slate-800 rounded-xl p-6 border border-slate-700 flex items-center shadow-xl overflow-hidden">
-                {/* Rank Number */}
-                <div className={clsx(
-                  "flex-shrink-0 w-16 h-16 rounded-full flex items-center justify-center text-3xl font-bold mr-6 z-10",
-                  index === 0 ? "bg-yellow-500 text-yellow-900" :
-                  index === 1 ? "bg-gray-400 text-gray-900" :
-                  index === 2 ? "bg-amber-700 text-amber-100" :
-                  "bg-slate-700 text-slate-300"
-                )}>
-                  #{index + 1}
-                </div>
-
-                <div className="flex-grow z-10">
-                  <h3 className="text-2xl font-bold text-white mb-1">{project.name}</h3>
-                  <p className="text-slate-400">{project.presenter} • {project.department}</p>
-                </div>
-
-                <div className="text-right z-10 min-w-[120px]">
-                  <div className="text-sm text-slate-400 uppercase tracking-wider">Final Score</div>
-                  <div className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
-                    {project.finalScore?.toFixed(1)}
+            {/* 评委卡片区域 */}
+            {reviewerStatuses.length > 0 && (
+              <div className="space-y-10">
+                {/* 领导层评委 */}
+                <div>
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-8 h-8 rounded-lg bg-[#c53d43]/20 flex items-center justify-center">
+                      <svg className="w-4 h-4 text-[#c53d43]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-xl font-bold text-[#f5f1eb]" style={{ fontFamily: 'var(--font-noto-serif)' }}>
+                      中心领导/总工 <span className="text-[#6e7681] font-normal text-base ml-2">（权重 60%）</span>
+                    </h3>
+                    <div className="ml-auto text-sm text-[#6e7681]">
+                      {leaders.filter(l => l.hasVoted).length} / {leaders.length}
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap justify-center gap-4">
+                    {leaders.map((reviewer, index) => (
+                      <ReviewerCard key={reviewer.id} reviewer={reviewer} index={index} color="vermilion" />
+                    ))}
                   </div>
                 </div>
 
-                {/* Background Bar based on score */}
+                {/* 部门负责人评委 */}
+                <div>
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-8 h-8 rounded-lg bg-[#d4a853]/20 flex items-center justify-center">
+                      <svg className="w-4 h-4 text-[#d4a853]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-xl font-bold text-[#f5f1eb]" style={{ fontFamily: 'var(--font-noto-serif)' }}>
+                      各所/部负责人 <span className="text-[#6e7681] font-normal text-base ml-2">（权重 40%）</span>
+                    </h3>
+                    <div className="ml-auto text-sm text-[#6e7681]">
+                      {deptHeads.filter(d => d.hasVoted).length} / {deptHeads.length}
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap justify-center gap-3">
+                    {deptHeads.map((reviewer, index) => (
+                      <ReviewerCard key={reviewer.id} reviewer={reviewer} index={index} color="gold" />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 结果公布 */}
+        {state === 'REVEALED' && (
+          <div className="space-y-4">
+            {results.map((project, index) => (
+              <div
+                key={project.id}
+                className="relative float-card p-6 flex items-center gap-6 overflow-hidden animate-fade-in-up"
+                style={{ animationDelay: `${index * 0.15}s` }}
+              >
+                {/* 排名奖牌 */}
+                <div className={clsx(
+                  "flex-shrink-0 w-20 h-20 rounded-2xl flex flex-col items-center justify-center text-center z-10 transition-transform hover:scale-110",
+                  index === 0 ? "medal-gold" :
+                  index === 1 ? "medal-silver" :
+                  index === 2 ? "medal-bronze" :
+                  "bg-[#21262d] border border-[#30363d]"
+                )}>
+                  {index < 3 ? (
+                    <>
+                      <span className="text-xs font-medium opacity-80">
+                        {index === 0 ? '冠军' : index === 1 ? '亚军' : '季军'}
+                      </span>
+                      <span className="text-2xl font-black">
+                        {index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-xs text-[#6e7681]">第</span>
+                      <span className="text-2xl font-black text-[#a0a0a0]">{index + 1}</span>
+                      <span className="text-xs text-[#6e7681]">名</span>
+                    </>
+                  )}
+                </div>
+
+                {/* 项目信息 */}
+                <div className="flex-grow z-10">
+                  <h3 className="text-2xl font-bold text-[#f5f1eb] mb-1" style={{ fontFamily: 'var(--font-noto-serif)' }}>
+                    {project.name}
+                  </h3>
+                  <p className="text-[#6e7681] flex items-center gap-2">
+                    <span>{project.presenter}</span>
+                    <span className="text-[#30363d]">·</span>
+                    <span>{project.department}</span>
+                    <span className="text-[#30363d]">·</span>
+                    <span className="text-[#7ec699]">{project.scoreCount} 票</span>
+                  </p>
+                </div>
+
+                {/* 最终得分 */}
+                <div className="text-right z-10 min-w-[140px]">
+                  <div className="text-xs text-[#6e7681] uppercase tracking-widest mb-1">最终得分</div>
+                  <div className={clsx(
+                    "text-5xl font-black",
+                    index === 0 ? "text-[#ffd700]" :
+                    index === 1 ? "text-[#c0c0c0]" :
+                    index === 2 ? "text-[#cd7f32]" :
+                    "text-[#d4a853]"
+                  )}>
+                    {project.finalScore?.toFixed(1) || '-'}
+                  </div>
+                </div>
+
+                {/* 背景进度条 */}
                 <div
-                  className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-blue-900/30 to-purple-900/30 transition-all duration-1000"
-                  style={{ width: `${project.finalScore}%`, zIndex: 0 }}
+                  className="absolute left-0 top-0 bottom-0 transition-all duration-1000 z-0"
+                  style={{
+                    width: `${project.finalScore || 0}%`,
+                    background: index === 0
+                      ? 'linear-gradient(90deg, rgba(255,215,0,0.1) 0%, rgba(255,215,0,0.05) 100%)'
+                      : index === 1
+                      ? 'linear-gradient(90deg, rgba(192,192,192,0.1) 0%, rgba(192,192,192,0.05) 100%)'
+                      : index === 2
+                      ? 'linear-gradient(90deg, rgba(205,127,50,0.1) 0%, rgba(205,127,50,0.05) 100%)'
+                      : 'linear-gradient(90deg, rgba(212,168,83,0.1) 0%, rgba(212,168,83,0.05) 100%)'
+                  }}
                 />
               </div>
             ))}
           </div>
         )}
       </main>
+
+      {/* 底部装饰 */}
+      <footer className="relative z-10 mt-12 text-center">
+        <div className="flex items-center justify-center gap-3 text-[#30363d] text-sm">
+          <div className="w-12 h-px bg-gradient-to-r from-transparent via-[#30363d] to-transparent" />
+          <span>智评 SmartScore</span>
+          <div className="w-12 h-px bg-gradient-to-r from-transparent via-[#30363d] to-transparent" />
+        </div>
+      </footer>
+    </div>
+  )
+}
+
+// 评委卡片组件 - 扑克牌风格
+function ReviewerCard({
+  reviewer,
+  index,
+  color
+}: {
+  reviewer: ReviewerStatus
+  index: number
+  color: 'vermilion' | 'gold'
+}) {
+  const hasVoted = reviewer.hasVoted
+  const colorClasses = {
+    vermilion: {
+      voted: 'border-[#7ec699] bg-gradient-to-br from-[#7ec699]/20 to-[#5fb3b3]/10 shadow-lg shadow-[#7ec699]/20',
+      notVoted: 'border-[#30363d] bg-[#161b22]/80',
+      badge: 'bg-[#c53d43]',
+      glow: 'shadow-[#7ec699]/40'
+    },
+    gold: {
+      voted: 'border-[#7ec699] bg-gradient-to-br from-[#7ec699]/20 to-[#5fb3b3]/10 shadow-lg shadow-[#7ec699]/20',
+      notVoted: 'border-[#30363d] bg-[#161b22]/80',
+      badge: 'bg-[#d4a853]',
+      glow: 'shadow-[#7ec699]/40'
+    }
+  }
+
+  const colors = colorClasses[color]
+
+  // Get initials or first character
+  const initial = reviewer.name.charAt(0)
+
+  return (
+    <div
+      className={clsx(
+        "relative w-24 h-32 rounded-xl border-2 transition-all duration-500 transform",
+        hasVoted ? colors.voted : colors.notVoted,
+        hasVoted && "scale-105",
+        "hover:scale-110"
+      )}
+      style={{
+        animationDelay: `${index * 0.05}s`,
+        transform: `rotate(${(index % 5 - 2) * 2}deg)`
+      }}
+    >
+      {/* 亮灯效果 */}
+      {hasVoted && (
+        <div className={clsx(
+          "absolute -inset-1 rounded-xl blur-md opacity-50",
+          "bg-gradient-to-br from-[#7ec699] to-[#5fb3b3]"
+        )} />
+      )}
+
+      <div className="relative h-full flex flex-col items-center justify-center p-2">
+        {/* 头像 */}
+        <div className={clsx(
+          "w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-2 transition-all duration-500",
+          hasVoted
+            ? "bg-[#7ec699] text-[#0d1117]"
+            : "bg-[#21262d] text-[#6e7681]"
+        )}>
+          {hasVoted ? (
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          ) : (
+            initial
+          )}
+        </div>
+
+        {/* 名称 */}
+        <div className={clsx(
+          "text-xs font-medium text-center truncate w-full px-1 transition-colors duration-500",
+          hasVoted ? "text-[#f5f1eb]" : "text-[#6e7681]"
+        )}>
+          {reviewer.name.length > 6 ? reviewer.name.slice(0, 6) + '...' : reviewer.name}
+        </div>
+
+        {/* 状态指示器 */}
+        <div className={clsx(
+          "absolute top-1 right-1 w-3 h-3 rounded-full transition-all duration-500",
+          hasVoted
+            ? "bg-[#7ec699] animate-pulse"
+            : "bg-[#30363d]"
+        )} />
+      </div>
     </div>
   )
 }
