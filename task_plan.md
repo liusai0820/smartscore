@@ -12,7 +12,9 @@ Design and plan the implementation of a "Smart Scoring Software" for internal co
 - [x] Task 1: Setup Prisma & Database Schema
 - [x] Task 2: Backend API - Data & Auth
 - [x] Task 3: Backend API - Scoring & State
-- [ ] Task 4: Frontend - Reviewer Interface (In Progress)
+- [x] Task 4: Frontend - Reviewer Interface
+- [x] Task 5: Frontend - Admin & Display
+- [x] Task 6: Final Polish & Verification
 
 ## Decisions Made
 - [User Interface]: Reviewers will use Mobile/Tablets for scoring.
