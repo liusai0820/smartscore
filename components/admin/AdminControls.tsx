@@ -5,6 +5,8 @@ import axios from 'axios'
 import { clsx } from 'clsx'
 import { useRouter } from 'next/navigation'
 import { Project } from '@prisma/client'
+import Modal from '@/components/ui/Modal'
+import ProjectEditor from './ProjectEditor'
 
 interface AdminControlsProps {
   initialState: string
@@ -16,6 +18,8 @@ export default function AdminControls({ initialState, initialProjectId, projects
   const [state, setState] = useState(initialState)
   const [currentProjectId, setCurrentProjectId] = useState<string | null>(initialProjectId)
   const [loading, setLoading] = useState(false)
+  const [editingProject, setEditingProject] = useState<Project | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const router = useRouter()
 
   const updateState = async (newState: string) => {
@@ -42,6 +46,36 @@ export default function AdminControls({ initialState, initialProjectId, projects
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleEdit = (project: Project, e: React.MouseEvent) => {
+    e.stopPropagation()
+    setEditingProject(project)
+    setIsModalOpen(true)
+  }
+
+  const handleDelete = async (projectId: string, e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (!confirm('确定要删除这个项目吗？相关的评分记录也将被删除！')) return
+
+    setLoading(true)
+    try {
+      await axios.delete(`/api/projects/${projectId}`)
+      if (currentProjectId === projectId) {
+        setCurrentProjectId(null)
+      }
+      router.refresh()
+    } catch (error) {
+      alert('删除失败，请重试')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleEditorSave = () => {
+    setIsModalOpen(false)
+    setEditingProject(null)
+    router.refresh()
   }
 
   const getStateInfo = () => {
@@ -241,12 +275,15 @@ export default function AdminControls({ initialState, initialProjectId, projects
         {/* 项目列表 */}
         <div className="space-y-2 max-h-[400px] overflow-y-auto">
           {projects.map((project, index) => (
-            <button
+            <div
               key={project.id}
-              onClick={() => selectProject(project.id)}
-              disabled={loading || project.id === currentProjectId}
+              onClick={() => {
+                if (!loading && project.id !== currentProjectId) {
+                  selectProject(project.id)
+                }
+              }}
               className={clsx(
-                "w-full p-4 rounded-xl border-2 transition-all duration-300 text-left flex items-center gap-4",
+                "w-full p-4 rounded-xl border-2 transition-all duration-300 flex items-center gap-4 cursor-pointer group relative",
                 project.id === currentProjectId
                   ? "border-[#c53d43] bg-[#c53d43]/10"
                   : "border-[#30363d] bg-[#161b22] hover:border-[#d4a853]/50 hover:bg-[#d4a853]/5"
@@ -271,14 +308,39 @@ export default function AdminControls({ initialState, initialProjectId, projects
                   {project.department} · {project.presenter}
                 </div>
               </div>
-              {project.id === currentProjectId && (
-                <div className="flex-shrink-0">
-                  <svg className="w-5 h-5 text-[#c53d43]" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                </div>
-              )}
-            </button>
+
+              {/* Actions Area */}
+              <div className="flex items-center gap-2">
+                {project.id === currentProjectId ? (
+                  <div className="flex-shrink-0 mr-2">
+                    <svg className="w-5 h-5 text-[#c53d43]" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      onClick={(e) => handleEdit(project, e)}
+                      className="p-2 text-[#6e7681] hover:text-[#58a6ff] hover:bg-[#58a6ff]/10 rounded-lg transition-colors"
+                      title="编辑项目"
+                    >
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={(e) => handleDelete(project.id, e)}
+                      className="p-2 text-[#6e7681] hover:text-[#e85a5a] hover:bg-[#e85a5a]/10 rounded-lg transition-colors"
+                      title="删除项目"
+                    >
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
           ))}
         </div>
       </div>
@@ -322,6 +384,20 @@ export default function AdminControls({ initialState, initialProjectId, projects
           将清空所有评分记录，重置系统状态为关闭，且取消当前选中项目。用户和项目数据将保留。
         </p>
       </div>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="编辑项目"
+      >
+        {editingProject && (
+          <ProjectEditor
+            project={editingProject}
+            onSave={handleEditorSave}
+            onCancel={() => setIsModalOpen(false)}
+          />
+        )}
+      </Modal>
     </div>
   )
 }
