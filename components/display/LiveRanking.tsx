@@ -29,6 +29,11 @@ type Result = {
   leaderAvg: number | null
   deptHeadAvg: number | null
   finalScore: number | null
+  avgValueScore: number | null
+  avgInnovScore: number | null
+  avgFeasiScore: number | null
+  avgOutputScore: number | null
+  standardDeviation: number | null
 }
 
 type ApiResponse = {
@@ -43,6 +48,7 @@ type ApiResponse = {
 export default function LiveRanking() {
   const [data, setData] = useState<ApiResponse | null>(null)
   const [loading, setLoading] = useState(true)
+  const [viewMode, setViewMode] = useState<'OVERALL' | 'DIMENSIONS' | 'CONSISTENCY'>('OVERALL')
 
   const fetchData = async () => {
     try {
@@ -59,6 +65,22 @@ export default function LiveRanking() {
     const interval = setInterval(fetchData, 2000)
     return () => clearInterval(interval)
   }, [])
+
+  // Cycle view modes when in REVEALED state
+  useEffect(() => {
+    if (data?.state === 'REVEALED') {
+      const timer = setInterval(() => {
+        setViewMode(prev => {
+          if (prev === 'OVERALL') return 'DIMENSIONS'
+          if (prev === 'DIMENSIONS') return 'CONSISTENCY'
+          return 'OVERALL'
+        })
+      }, 10000) // 10 seconds per view
+      return () => clearInterval(timer)
+    } else {
+      setViewMode('OVERALL')
+    }
+  }, [data?.state])
 
   if (loading && !data) {
     return (
@@ -247,83 +269,209 @@ export default function LiveRanking() {
 
         {/* 结果公布 */}
         {state === 'REVEALED' && (
-          <div className="space-y-4">
-            {results.map((project, index) => (
-              <div
-                key={project.id}
-                className="relative float-card p-6 flex items-center gap-6 overflow-hidden animate-fade-in-up"
-                style={{ animationDelay: `${index * 0.15}s` }}
-              >
-                {/* 排名奖牌 */}
-                <div className={clsx(
-                  "flex-shrink-0 w-20 h-20 rounded-2xl flex flex-col items-center justify-center text-center z-10 transition-transform hover:scale-110",
-                  index === 0 ? "medal-gold" :
-                  index === 1 ? "medal-silver" :
-                  index === 2 ? "medal-bronze" :
-                  "bg-[#21262d] border border-[#30363d]"
-                )}>
-                  {index < 3 ? (
-                    <>
-                      <span className="text-xs font-medium opacity-80">
-                        {index === 0 ? '冠军' : index === 1 ? '亚军' : '季军'}
-                      </span>
-                      <span className="text-2xl font-black">
-                        {index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <span className="text-xs text-[#6e7681]">第</span>
-                      <span className="text-2xl font-black text-[#a0a0a0]">{index + 1}</span>
-                      <span className="text-xs text-[#6e7681]">名</span>
-                    </>
-                  )}
-                </div>
-
-                {/* 项目信息 */}
-                <div className="flex-grow z-10">
-                  <h3 className="text-2xl font-bold text-[#f5f1eb] mb-1" style={{ fontFamily: 'var(--font-noto-serif)' }}>
-                    {project.name}
-                  </h3>
-                  <p className="text-[#6e7681] flex items-center gap-2">
-                    <span>{project.presenter}</span>
-                    <span className="text-[#30363d]">·</span>
-                    <span>{project.department}</span>
-                    <span className="text-[#30363d]">·</span>
-                    <span className="text-[#7ec699]">{project.scoreCount} 票</span>
-                  </p>
-                </div>
-
-                {/* 最终得分 */}
-                <div className="text-right z-10 min-w-[140px]">
-                  <div className="text-xs text-[#6e7681] uppercase tracking-widest mb-1">最终得分</div>
-                  <div className={clsx(
-                    "text-5xl font-black",
-                    index === 0 ? "text-[#ffd700]" :
-                    index === 1 ? "text-[#c0c0c0]" :
-                    index === 2 ? "text-[#cd7f32]" :
-                    "text-[#d4a853]"
-                  )}>
-                    {project.finalScore?.toFixed(1) || '-'}
-                  </div>
-                </div>
-
-                {/* 背景进度条 */}
+          <div className="space-y-6">
+            {/* 视图切换指示器 */}
+            <div className="flex justify-center items-center gap-4 mb-8">
+              {(['OVERALL', 'DIMENSIONS', 'CONSISTENCY'] as const).map((mode) => (
                 <div
-                  className="absolute left-0 top-0 bottom-0 transition-all duration-1000 z-0"
-                  style={{
-                    width: `${project.finalScore || 0}%`,
-                    background: index === 0
-                      ? 'linear-gradient(90deg, rgba(255,215,0,0.1) 0%, rgba(255,215,0,0.05) 100%)'
-                      : index === 1
-                      ? 'linear-gradient(90deg, rgba(192,192,192,0.1) 0%, rgba(192,192,192,0.05) 100%)'
-                      : index === 2
-                      ? 'linear-gradient(90deg, rgba(205,127,50,0.1) 0%, rgba(205,127,50,0.05) 100%)'
-                      : 'linear-gradient(90deg, rgba(212,168,83,0.1) 0%, rgba(212,168,83,0.05) 100%)'
-                  }}
-                />
+                  key={mode}
+                  className={clsx(
+                    "px-4 py-2 rounded-full text-sm font-bold transition-all duration-300",
+                    viewMode === mode
+                      ? "bg-[#d4a853] text-[#0d1117]"
+                      : "bg-[#161b22] text-[#6e7681] border border-[#30363d]"
+                  )}
+                >
+                  {mode === 'OVERALL' && '总榜单'}
+                  {mode === 'DIMENSIONS' && '单项最佳'}
+                  {mode === 'CONSISTENCY' && '共识度排名'}
+                </div>
+              ))}
+            </div>
+
+            {/* 总榜单视图 */}
+            {viewMode === 'OVERALL' && (
+              <div className="space-y-4">
+                {results.map((project, index) => (
+                  <div
+                    key={project.id}
+                    className="relative float-card p-6 flex items-center gap-6 overflow-hidden animate-fade-in-up"
+                    style={{ animationDelay: `${index * 0.15}s` }}
+                  >
+                    {/* 排名奖牌 */}
+                    <div className={clsx(
+                      "flex-shrink-0 w-20 h-20 rounded-2xl flex flex-col items-center justify-center text-center z-10 transition-transform hover:scale-110",
+                      index === 0 ? "medal-gold" :
+                      index === 1 ? "medal-silver" :
+                      index === 2 ? "medal-bronze" :
+                      "bg-[#21262d] border border-[#30363d]"
+                    )}>
+                      {index < 3 ? (
+                        <>
+                          <span className="text-xs font-medium opacity-80">
+                            {index === 0 ? '冠军' : index === 1 ? '亚军' : '季军'}
+                          </span>
+                          <span className="text-2xl font-black">
+                            {index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="text-xs text-[#6e7681]">第</span>
+                          <span className="text-2xl font-black text-[#a0a0a0]">{index + 1}</span>
+                          <span className="text-xs text-[#6e7681]">名</span>
+                        </>
+                      )}
+                    </div>
+
+                    {/* 项目信息 */}
+                    <div className="flex-grow z-10">
+                      <h3 className="text-2xl font-bold text-[#f5f1eb] mb-1" style={{ fontFamily: 'var(--font-noto-serif)' }}>
+                        {project.name}
+                      </h3>
+                      <p className="text-[#6e7681] flex items-center gap-2">
+                        <span>{project.presenter}</span>
+                        <span className="text-[#30363d]">·</span>
+                        <span>{project.department}</span>
+                        <span className="text-[#30363d]">·</span>
+                        <span className="text-[#7ec699]">{project.scoreCount} 票</span>
+                      </p>
+                    </div>
+
+                    {/* 最终得分 */}
+                    <div className="text-right z-10 min-w-[140px]">
+                      <div className="text-xs text-[#6e7681] uppercase tracking-widest mb-1">最终得分</div>
+                      <div className={clsx(
+                        "text-5xl font-black",
+                        index === 0 ? "text-[#ffd700]" :
+                        index === 1 ? "text-[#c0c0c0]" :
+                        index === 2 ? "text-[#cd7f32]" :
+                        "text-[#d4a853]"
+                      )}>
+                        {project.finalScore?.toFixed(1) || '-'}
+                      </div>
+                    </div>
+
+                    {/* 背景进度条 */}
+                    <div
+                      className="absolute left-0 top-0 bottom-0 transition-all duration-1000 z-0"
+                      style={{
+                        width: `${project.finalScore || 0}%`,
+                        background: index === 0
+                          ? 'linear-gradient(90deg, rgba(255,215,0,0.1) 0%, rgba(255,215,0,0.05) 100%)'
+                          : index === 1
+                          ? 'linear-gradient(90deg, rgba(192,192,192,0.1) 0%, rgba(192,192,192,0.05) 100%)'
+                          : index === 2
+                          ? 'linear-gradient(90deg, rgba(205,127,50,0.1) 0%, rgba(205,127,50,0.05) 100%)'
+                          : 'linear-gradient(90deg, rgba(212,168,83,0.1) 0%, rgba(212,168,83,0.05) 100%)'
+                      }}
+                    />
+                  </div>
+                ))}
               </div>
-            ))}
+            )}
+
+            {/* 单项最佳视图 */}
+            {viewMode === 'DIMENSIONS' && (
+              <div className="grid grid-cols-2 gap-6 animate-fade-in-up">
+                {[
+                  { key: 'avgValueScore', title: '研究价值', icon: '💎' },
+                  { key: 'avgInnovScore', title: '创新性', icon: '💡' },
+                  { key: 'avgFeasiScore', title: '可行性', icon: '🔧' },
+                  { key: 'avgOutputScore', title: '预期成果', icon: '📈' }
+                ].map((dim) => {
+                  const sorted = [...results]
+                    .sort((a, b) => ((b[dim.key as keyof Result] as number) || 0) - ((a[dim.key as keyof Result] as number) || 0))
+                    .slice(0, 3)
+
+                  return (
+                    <div key={dim.key} className="bg-[#161b22] border border-[#30363d] rounded-2xl p-6 relative overflow-hidden">
+                      <div className="flex items-center gap-3 mb-6 relative z-10">
+                        <span className="text-3xl">{dim.icon}</span>
+                        <h3 className="text-xl font-bold text-[#f5f1eb]">{dim.title}</h3>
+                      </div>
+
+                      <div className="space-y-4 relative z-10">
+                        {sorted.map((p, i) => (
+                          <div key={p.id} className="flex items-center gap-4">
+                            <div className={clsx(
+                              "w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm",
+                              i === 0 ? "bg-[#ffd700] text-black" :
+                              i === 1 ? "bg-[#c0c0c0] text-black" :
+                              "bg-[#cd7f32] text-black"
+                            )}>
+                              {i + 1}
+                            </div>
+                            <div className="flex-grow min-w-0">
+                              <div className="text-[#f5f1eb] font-medium truncate">{p.name}</div>
+                              <div className="text-xs text-[#6e7681] truncate">{p.presenter}</div>
+                            </div>
+                            <div className="text-[#7ec699] font-mono font-bold">
+                              {(p[dim.key as keyof Result] as number)?.toFixed(1)}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* 装饰背景 */}
+                      <div className="absolute -right-4 -bottom-4 w-32 h-32 bg-white/5 rounded-full blur-2xl" />
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+
+            {/* 共识度排名视图 */}
+            {viewMode === 'CONSISTENCY' && (
+              <div className="space-y-4">
+                <div className="bg-[#161b22]/50 p-4 rounded-xl border border-[#30363d] text-center mb-4 text-[#6e7681] text-sm animate-fade-in-up">
+                  * 争议度越低（标准差越小），说明评委意见越统一，共识度越高
+                </div>
+                {[...results]
+                  .sort((a, b) => ((a.standardDeviation || 0) - (b.standardDeviation || 0))) // 升序排列，越小越一致
+                  .map((project, index) => (
+                  <div
+                    key={project.id}
+                    className="relative float-card p-6 flex items-center gap-6 overflow-hidden animate-fade-in-up"
+                    style={{ animationDelay: `${index * 0.15}s` }}
+                  >
+                    <div className="w-16 h-16 rounded-2xl bg-[#21262d] border border-[#30363d] flex flex-col items-center justify-center text-[#6e7681]">
+                      <span className="text-xs">共识</span>
+                      <span className="text-xl font-bold text-[#f5f1eb]">{index + 1}</span>
+                    </div>
+
+                    <div className="flex-grow z-10">
+                      <h3 className="text-2xl font-bold text-[#f5f1eb] mb-1" style={{ fontFamily: 'var(--font-noto-serif)' }}>
+                        {project.name}
+                      </h3>
+                      <p className="text-[#6e7681] flex items-center gap-2">
+                        <span>{project.presenter}</span>
+                        <span className="text-[#30363d]">·</span>
+                        <span>{project.department}</span>
+                      </p>
+                    </div>
+
+                    <div className="text-right z-10 min-w-[140px]">
+                      <div className="text-xs text-[#6e7681] uppercase tracking-widest mb-1">争议指数</div>
+                      <div className={clsx(
+                        "text-4xl font-black",
+                        index < 3 ? "text-[#7ec699]" : "text-[#6e7681]"
+                      )}>
+                        {project.standardDeviation?.toFixed(2) || '-'}
+                      </div>
+                    </div>
+
+                    {/* 背景条 - 争议指数越低（一致性高），背景越亮 */}
+                     <div
+                      className="absolute left-0 top-0 bottom-0 transition-all duration-1000 z-0 bg-[#7ec699]/5"
+                      style={{
+                        width: `${Math.max(0, 100 - (project.standardDeviation || 0) * 5)}%`, // 简单的可视化映射
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </main>

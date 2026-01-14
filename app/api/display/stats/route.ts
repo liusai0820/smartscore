@@ -72,6 +72,28 @@ export async function GET() {
     const results = projects.map(project => {
       const leaderScores = project.scores.filter(s => s.user.role === 'LEADER')
       const deptHeadScores = project.scores.filter(s => s.user.role === 'DEPT_HEAD')
+      const allScores = [...leaderScores, ...deptHeadScores]
+
+      // Calculate sub-dimension averages (scaled to 100)
+      const calculateDimensionAvg = (key: 'valueScore' | 'innovScore' | 'feasiScore' | 'outputScore') => {
+        if (allScores.length === 0) return 0
+        const sum = allScores.reduce((acc, s) => acc + s[key], 0)
+        return (sum / allScores.length) * 10
+      }
+
+      const avgValueScore = calculateDimensionAvg('valueScore')
+      const avgInnovScore = calculateDimensionAvg('innovScore')
+      const avgFeasiScore = calculateDimensionAvg('feasiScore')
+      const avgOutputScore = calculateDimensionAvg('outputScore')
+
+      // Calculate Standard Deviation
+      let standardDeviation = 0
+      if (allScores.length > 0) {
+        const weightedTotals = allScores.map(s => calculateWeightedScore(s))
+        const mean = weightedTotals.reduce((a, b) => a + b, 0) / weightedTotals.length
+        const variance = weightedTotals.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / weightedTotals.length
+        standardDeviation = Math.sqrt(variance)
+      }
 
       // Calculate weighted average for each group
       const avgWeightedScore = (scores: typeof leaderScores) => {
@@ -104,7 +126,12 @@ export async function GET() {
         scoreCount: project.scores.length,
         leaderAvg: state === 'REVEALED' ? leaderAvg : null,
         deptHeadAvg: state === 'REVEALED' ? deptHeadAvg : null,
-        finalScore: state === 'REVEALED' ? finalScore : null
+        finalScore: state === 'REVEALED' ? finalScore : null,
+        avgValueScore: state === 'REVEALED' ? avgValueScore : null,
+        avgInnovScore: state === 'REVEALED' ? avgInnovScore : null,
+        avgFeasiScore: state === 'REVEALED' ? avgFeasiScore : null,
+        avgOutputScore: state === 'REVEALED' ? avgOutputScore : null,
+        standardDeviation: state === 'REVEALED' ? standardDeviation : null
       }
     })
 
