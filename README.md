@@ -1,82 +1,117 @@
-# SmartScore - Internal Project Scoring System
+# SmartScore - 智能内部项目评审系统
 
-A real-time scoring application for internal project reviews.
+这是一个专为企业/组织内部项目评审设计的实时评分应用程序。它支持多角色权重打分、利益冲突回避、实时大屏展示以及 AI 辅助数据导入功能。
 
-## Features
+## ✨ 核心功能
 
-- **Reviewer Interface (Mobile-First):**
-  - Secure login with name and passcode.
-  - List of projects to score.
-  - Conflict of interest detection (cannot score own department).
-  - 0-100 scoring with visual feedback.
+### 1. 📱 评审端 (移动端优先)
+专为手机和平板优化的评审界面，提供流畅的打分体验。
+- **安全登录**：支持姓名+口令（Passcode）的简单认证方式。
+- **利益冲突回避**：自动检测评审员与项目所属部门，若相同则自动回避（不可打分）。
+- **多维度评分**：支持四个维度打分（研究价值 30%、创新性 25%、可行性 25%、预期成果 20%）。
+- **实时同步**：无需手动刷新，系统状态和当前待评项目会自动推送到评审端。
 
-- **Admin Dashboard:**
-  - Control scoring state (CLOSED -> SCORING -> REVEALED).
-  - Live progress monitoring.
-  - Bulk data upload (JSON).
+### 2. 🎛️ 管理后台 (Admin Dashboard)
+全功能的控制中心，掌控评审全流程。
+- **流程控制**：一键切换系统状态（评分关闭 -> 评分进行中 -> 结果揭晓）。
+- **AI 智能导入**：
+  - 上传 Excel/Word 格式的项目清单文件。
+  - 集成 LLM (OpenAI/OpenRouter) 自动提取项目名称、部门、汇报人及简介。
+  - 提供在线预览、编辑和确认导入功能。
+- **项目管理**：支持编辑项目信息或删除项目。
+- **数据重置**：支持一键清空所有评分数据（用于测试或新一轮评审）。
 
-- **Live Display:**
-  - Big-screen ready view.
-  - Shows real-time voting activity during SCORING.
-  - Reveals weighted rankings with animations when REVEALED.
+### 3. 📊 实时大屏 (Live Display)
+适合投影到大屏幕的实时数据展示页面。
+- **评分进行时**：实时显示已提交评分的人数和总体进度条，营造紧张氛围。
+- **结果揭晓时**：
+  - **总榜单**：展示加权后的最终得分排名，带有动态排序动画。
+  - **维度分析**：雷达图展示各项目的优势维度（价值/创新/可行/成果）。
+  - **一致性分析**：展示评分争议度（标准差），识别最具争议的项目。
+- **浅色新中式科技风**：精心设计的 UI，兼具专业感与视觉美感。
 
-## Tech Stack
+## 🛠️ 技术栈
 
-- **Framework:** Next.js 15 (App Router)
-- **Database:** SQLite (dev) / Prisma ORM
-- **Styling:** Tailwind CSS
-- **Language:** TypeScript
+- **框架**: [Next.js 15](https://nextjs.org/) (App Router)
+- **数据库**: SQLite (开发环境) / Prisma ORM
+- **样式**: Tailwind CSS (自定义 CSS 变量主题系统)
+- **AI 集成**: OpenAI SDK (支持 OpenRouter, DeepSeek, Claude 等)
+- **文件处理**: `xlsx` (Excel), `mammoth` (Word)
+- **语言**: TypeScript
 
-## Setup & Running
+## 🚀 快速开始
 
-1. **Install Dependencies:**
-   ```bash
-   npm install
-   ```
+### 1. 环境准备
+确保您的环境已安装 Node.js (v18+)。
 
-2. **Initialize Database:**
-   ```bash
-   npx prisma generate
-   npx prisma db push
-   ```
-
-3. **Run Development Server:**
-   ```bash
-   npm run dev
-   ```
-   Open [http://localhost:3000](http://localhost:3000).
-
-## Usage Guide
-
-### 1. Seed Data (Admin)
-Go to `/admin` and paste the seed JSON in the upload box.
-Example format:
-```json
-{
-  "users": [
-    { "name": "Alice", "role": "LEADER", "department": "Management", "passcode": "1234" },
-    { "name": "Bob", "role": "DEPT_HEAD", "department": "Tech", "passcode": "1234" }
-  ],
-  "projects": [
-    { "name": "Project Alpha", "department": "Tech", "presenter": "Charlie" },
-    { "name": "Project Beta", "department": "Sales", "presenter": "Dana" }
-  ]
-}
+```bash
+# 安装依赖
+npm install
 ```
 
-### 2. Start Scoring (Admin)
-- On `/admin`, click **START SCORING**.
+### 2. 配置环境变量
+复制 `.env.local` 示例并配置 AI 模型（可选，仅用于 AI 导入功能）。
 
-### 3. Reviewers Vote
-- Reviewers go to `/login`, select their name, enter passcode.
-- They submit scores for projects (except their own department).
+```env
+# .env.local
+OPENROUTER_API_KEY=sk-or-your-key...
+# 或者使用 OpenAI
+OPENAI_API_KEY=sk-your-key...
 
-### 4. Live Display
-- Open `/display` on a shared screen. It will show voting progress.
+# 选择模型 (可选)
+AI_MODEL=google/gemini-2.0-flash-exp
+```
 
-### 5. Reveal Results
-- On `/admin`, click **REVEAL RESULTS**.
-- The display page will show the final ranked list with weighted scores.
+### 3. 初始化数据库
 
-## Scoring Logic
-Final Score = `(LeaderAvg * 0.6) + (DeptHeadAvg * 0.4)`
+```bash
+npx prisma generate
+npx prisma db push
+```
+
+### 4. 启动开发服务器
+
+```bash
+npm run dev
+```
+访问 [http://localhost:3000](http://localhost:3000) 开始使用。
+
+## 📖 使用指南
+
+### 第一步：数据导入 (管理员)
+1. 访问 `/admin`。
+2. 在“数据上传”卡片中，选择 **"AI 文件上传"**。
+3. 上传包含项目列表的 Excel 或 Word 文件。
+4. 点击“开始 AI 分析”，等待解析完成。
+5. 在预览表格中核对信息，确认无误后点击“导入项目”。
+6. (可选) 也可以直接粘贴 JSON 格式的用户/项目数据。
+
+### 第二步：开启评审 (管理员)
+1. 在 `/admin` 页面，点击 **"开始评分"**。
+2. 在下方“当前评分项目”列表中，点击选择第一个要评审的项目。
+
+### 第三步：评审员打分
+1. 评审员访问 `/login`，选择自己的名字并输入口令登录。
+2. 界面会自动显示当前正在评审的项目。
+3. 拖动滑块对各项指标进行打分（1-10分），点击提交。
+
+### 第四步：大屏展示
+1. 将 `/display` 页面投屏到大屏幕。
+2. 页面会实时显示当前的打分进度。
+
+### 第五步：结果揭晓 (管理员)
+1. 当所有项目评分结束后，管理员在 `/admin` 点击 **"公布结果"**。
+2. 大屏页面将自动切换到排行榜视图，展示最终排名。
+
+## 🧮 评分逻辑
+
+最终得分计算公式：
+`Final Score = (LeaderAvg * 0.6) + (DeptHeadAvg * 0.4)`
+
+*   **LeaderAvg**: 公司领导角色的平均分。
+*   **DeptHeadAvg**: 部门负责人角色的平均分。
+*   **维度权重**:
+    *   研究价值: 30%
+    *   创新性: 25%
+    *   可行性: 25%
+    *   预期成果: 20%

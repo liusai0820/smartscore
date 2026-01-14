@@ -2,6 +2,7 @@ import { prisma } from '@/lib/db'
 import { getCurrentUser, clearSession } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import ProjectCard from '@/components/ui/ProjectCard'
+import AutoRefresher from '@/components/ui/AutoRefresher'
 
 async function LogoutButton() {
   'use server'
@@ -58,6 +59,10 @@ export default async function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-[var(--color-ink)] pb-24">
+      <AutoRefresher
+        initialState={stateConfig?.value || 'CLOSED'}
+        initialProjectId={currentProjectId}
+      />
       {/* 顶部导航栏 */}
       <header className="bg-[var(--color-ink-light)] border-b border-[var(--color-ink-soft)] sticky top-0 z-20">
         <div className="max-w-3xl mx-auto px-4 py-4">
