@@ -66,18 +66,10 @@ export default function LiveRanking() {
     return () => clearInterval(interval)
   }, [])
 
-  // Cycle view modes when in REVEALED state
+  // Cycle view modes when in REVEALED state - REMOVED per user request
+  // Manual control only
   useEffect(() => {
-    if (data?.state === 'REVEALED') {
-      const timer = setInterval(() => {
-        setViewMode(prev => {
-          if (prev === 'OVERALL') return 'DIMENSIONS'
-          if (prev === 'DIMENSIONS') return 'CONSISTENCY'
-          return 'OVERALL'
-        })
-      }, 10000) // 10 seconds per view
-      return () => clearInterval(timer)
-    } else {
+    if (data?.state !== 'REVEALED') {
       setViewMode('OVERALL')
     }
   }, [data?.state])
@@ -273,19 +265,20 @@ export default function LiveRanking() {
             {/* 视图切换指示器 */}
             <div className="flex justify-center items-center gap-4 mb-8">
               {(['OVERALL', 'DIMENSIONS', 'CONSISTENCY'] as const).map((mode) => (
-                <div
+                <button
                   key={mode}
+                  onClick={() => setViewMode(mode)}
                   className={clsx(
-                    "px-4 py-2 rounded-full text-sm font-bold transition-all duration-300",
+                    "px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 hover:scale-105 active:scale-95",
                     viewMode === mode
-                      ? "bg-[#d4a853] text-[#0d1117]"
-                      : "bg-[#161b22] text-[#6e7681] border border-[#30363d]"
+                      ? "bg-[#d4a853] text-[#0d1117] shadow-lg shadow-[#d4a853]/20"
+                      : "bg-[#161b22] text-[#6e7681] border border-[#30363d] hover:border-[#d4a853]/50 hover:text-[#f5f1eb]"
                   )}
                 >
                   {mode === 'OVERALL' && '总榜单'}
                   {mode === 'DIMENSIONS' && '单项最佳'}
                   {mode === 'CONSISTENCY' && '共识度排名'}
-                </div>
+                </button>
               ))}
             </div>
 
