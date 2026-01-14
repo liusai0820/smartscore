@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { parseFile } from '@/lib/file-parser';
 import { extractProjectData } from '@/lib/ai-extractor';
+import { isAdminAuthenticated } from '@/lib/admin-auth';
 
 export async function POST(req: NextRequest) {
   try {
+    const isAdmin = await isAdminAuthenticated();
+    if (!isAdmin) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const formData = await req.formData();
     const file = formData.get('file');
 

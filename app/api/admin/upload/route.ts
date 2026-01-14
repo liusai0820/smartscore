@@ -1,8 +1,14 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
+import { isAdminAuthenticated } from '@/lib/admin-auth'
 
 export async function POST(request: Request) {
   try {
+    const isAdmin = await isAdminAuthenticated()
+    if (!isAdmin) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const body = await request.json()
     const { users, projects } = body
 

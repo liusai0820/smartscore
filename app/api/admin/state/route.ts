@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
+import { isAdminAuthenticated } from '@/lib/admin-auth'
 
 // Helper to ensure config exists
 async function ensureConfig() {
@@ -26,6 +27,11 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    const isAdmin = await isAdminAuthenticated()
+    if (!isAdmin) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const body = await request.json()
     const { state, currentProjectId } = body
 

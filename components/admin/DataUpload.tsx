@@ -44,6 +44,10 @@ export default function DataUpload() {
       setJsonInput('')
     } catch (error: any) {
       console.error(error)
+      if (error.response?.status === 401) {
+        window.location.href = '/admin/login'
+        return
+      }
       setStatus({
         type: 'error',
         message: '错误：' + (error.response?.data?.error || error.message || 'JSON格式无效')
@@ -82,6 +86,10 @@ export default function DataUpload() {
       setStatus({ type: 'success', message: 'AI分析完成，请确认数据并导入' })
     } catch (error: any) {
       console.error(error)
+      if (error.response?.status === 401) {
+        window.location.href = '/admin/login'
+        return
+      }
       setStatus({
         type: 'error',
         message: '分析失败：' + (error.response?.data?.error || error.message || '未知错误')
@@ -114,6 +122,10 @@ export default function DataUpload() {
       if (fileInputRef.current) fileInputRef.current.value = ''
     } catch (error: any) {
       console.error(error)
+      if (error.response?.status === 401) {
+        window.location.href = '/admin/login'
+        return
+      }
       setStatus({
         type: 'error',
         message: '导入失败：' + (error.response?.data?.error || error.message)

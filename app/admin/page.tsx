@@ -2,8 +2,17 @@ import { prisma } from '@/lib/db'
 import AdminControls from '@/components/admin/AdminControls'
 import DataUpload from '@/components/admin/DataUpload'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
+import { isAdminAuthenticated } from '@/lib/admin-auth'
+
+export const dynamic = 'force-dynamic'
 
 export default async function AdminPage() {
+  const isAdmin = await isAdminAuthenticated()
+  if (!isAdmin) {
+    redirect('/admin/login')
+  }
+
   const [stateConfig, projectConfig] = await Promise.all([
     prisma.config.findUnique({ where: { key: 'scoring_state' } }),
     prisma.config.findUnique({ where: { key: 'current_project' } })
@@ -31,6 +40,23 @@ export default async function AdminPage() {
               </svg>
               <span className="text-sm">返回</span>
             </Link>
+            <div className="w-px h-6 bg-[var(--color-ink-soft)]" />
+
+            <form action={async () => {
+              'use server'
+              const { clearAdminSession } = await import('@/lib/admin-auth')
+              await clearAdminSession()
+              const { redirect } = await import('next/navigation')
+              redirect('/admin/login')
+            }}>
+              <button className="flex items-center gap-2 text-[var(--color-text-muted)] hover:text-[#e85a5a] transition-colors text-sm">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                <span>退出</span>
+              </button>
+            </form>
+
             <div className="w-px h-6 bg-[var(--color-ink-soft)]" />
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-[var(--color-ink-medium)] border border-[var(--color-ink-soft)] flex items-center justify-center">

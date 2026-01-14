@@ -1,8 +1,14 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
+import { isAdminAuthenticated } from '@/lib/admin-auth'
 
 export async function POST() {
   try {
+    const isAdmin = await isAdminAuthenticated()
+    if (!isAdmin) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     // 1. Delete all scores
     await prisma.score.deleteMany()
 
