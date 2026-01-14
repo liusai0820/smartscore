@@ -39,17 +39,17 @@ export default function DataUpload() {
         <svg className="w-5 h-5 text-[#d4a853]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
         </svg>
-        <h2 className="text-lg font-bold text-[#f5f1eb]">数据上传</h2>
+        <h2 className="text-lg font-bold text-[var(--color-text-primary)]">数据上传</h2>
       </div>
 
-      <p className="text-sm text-[#6e7681] mb-4">
-        粘贴包含 <code className="px-1.5 py-0.5 rounded bg-[#21262d] text-[#d4a853] text-xs">&quot;users&quot;</code> 和{' '}
-        <code className="px-1.5 py-0.5 rounded bg-[#21262d] text-[#d4a853] text-xs">&quot;projects&quot;</code> 数组的 JSON 对象
+      <p className="text-sm text-[var(--color-text-muted)] mb-4">
+        粘贴包含 <code className="px-1.5 py-0.5 rounded bg-[var(--color-ink-medium)] text-[#d4a853] text-xs">&quot;users&quot;</code> 和{' '}
+        <code className="px-1.5 py-0.5 rounded bg-[var(--color-ink-medium)] text-[#d4a853] text-xs">&quot;projects&quot;</code> 数组的 JSON 对象
       </p>
 
       <div className="relative">
         <textarea
-          className="w-full h-48 p-4 rounded-xl bg-[#0d1117] border border-[#30363d] text-[#f5f1eb] font-mono text-sm resize-none focus:outline-none focus:border-[#d4a853] focus:ring-1 focus:ring-[#d4a853]/50 transition-all placeholder:text-[#6e7681]"
+          className="w-full h-48 p-4 rounded-xl bg-[var(--color-ink)] border border-[var(--color-ink-soft)] text-[var(--color-text-primary)] font-mono text-sm resize-none focus:outline-none focus:border-[#d4a853] focus:ring-1 focus:ring-[#d4a853]/50 transition-all placeholder:text-[var(--color-text-muted)]"
           value={jsonInput}
           onChange={(e) => setJsonInput(e.target.value)}
           placeholder={`{
@@ -64,7 +64,7 @@ export default function DataUpload() {
         {jsonInput && (
           <button
             onClick={() => setJsonInput('')}
-            className="absolute top-3 right-3 p-1.5 rounded-lg bg-[#21262d] text-[#6e7681] hover:text-[#e85a5a] hover:bg-[#e85a5a]/10 transition-colors"
+            className="absolute top-3 right-3 p-1.5 rounded-lg bg-[var(--color-ink-medium)] text-[var(--color-text-muted)] hover:text-[#e85a5a] hover:bg-[#e85a5a]/10 transition-colors"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -77,7 +77,7 @@ export default function DataUpload() {
         <button
           onClick={handleUpload}
           disabled={loading || !jsonInput}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-lg vermilion-gradient text-[#f5f1eb] font-bold shadow-lg shadow-[#c53d43]/20 hover:shadow-xl hover:shadow-[#c53d43]/30 hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-lg vermilion-gradient text-[var(--color-text-primary)] font-bold shadow-lg shadow-[#c53d43]/20 hover:shadow-xl hover:shadow-[#c53d43]/30 hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
         >
           {loading ? (
             <>
@@ -101,7 +101,7 @@ export default function DataUpload() {
           <div className={`flex items-center gap-2 text-sm ${
             status.type === 'success' ? 'text-[#7ec699]' :
             status.type === 'error' ? 'text-[#e85a5a]' :
-            'text-[#6e7681]'
+            'text-[var(--color-text-muted)]'
           }`}>
             {status.type === 'success' && (
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -119,14 +119,14 @@ export default function DataUpload() {
       </div>
 
       {/* 格式说明 */}
-      <div className="mt-6 p-4 rounded-lg bg-[#0d1117] border border-[#30363d]">
-        <h3 className="text-sm font-medium text-[#a0a0a0] mb-2 flex items-center gap-2">
+      <div className="mt-6 p-4 rounded-lg bg-[var(--color-ink)] border border-[var(--color-ink-soft)]">
+        <h3 className="text-sm font-medium text-[var(--color-text-secondary)] mb-2 flex items-center gap-2">
           <svg className="w-4 h-4 text-[#5fb3b3]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           数据格式说明
         </h3>
-        <div className="text-xs text-[#6e7681] space-y-1">
+        <div className="text-xs text-[var(--color-text-muted)] space-y-1">
           <p><span className="text-[#d4a853]">users</span>: name（姓名）、department（部门）、role（角色）、passcode（密码）</p>
           <p><span className="text-[#d4a853]">projects</span>: name（项目名）、department（所属部门）、presenter（汇报人）、description（描述）</p>
         </div>

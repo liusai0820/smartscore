@@ -1,29 +1,29 @@
 @import "tailwindcss";
 
-/* 新中式科技风 - Neo-Chinese Tech Theme */
+/* 新中式科技风 - Neo-Chinese Tech Theme (Light Ver.) */
 :root {
-  /* 主色调 - 墨玉与朱砂 */
-  --color-ink: #0d1117;
-  --color-ink-light: #161b22;
-  --color-ink-medium: #21262d;
-  --color-ink-soft: #30363d;
+  /* 主色调 - 水墨白与朱砂 */
+  --color-ink: #f0f2f5;        /* 页面背景 - 浅灰白 */
+  --color-ink-light: #ffffff;  /* 卡片背景 - 纯白 */
+  --color-ink-medium: #f5f7fa; /* 辅助背景 - 极浅灰 */
+  --color-ink-soft: #e1e4e8;   /* 边框 - 柔和灰 */
 
-  /* 强调色 - 朱砂红与琥珀金 */
+  /* 强调色 - 朱砂红与琥珀金 (保持不变，或微调对比度) */
   --color-vermilion: #c53d43;
   --color-vermilion-light: #e85a5a;
-  --color-amber: #d4a853;
-  --color-amber-glow: #f0c674;
+  --color-amber: #d97706;      /* 琥珀金 - 加深一点以在白底更清晰 */
+  --color-amber-glow: #f59e0b;
 
-  /* 辅助色 - 青瓷与玉白 */
-  --color-celadon: #5fb3b3;
-  --color-jade: #7ec699;
-  --color-ivory: #f5f1eb;
-  --color-silk: #e8e3db;
+  /* 辅助色 */
+  --color-celadon: #0d9488;    /* 青瓷 - 加深 */
+  --color-jade: #059669;       /* 玉绿 - 加深 */
+  --color-ivory: #ffffff;      /* 纯白文字(用于深色按钮上) */
+  --color-silk: #fafaf9;
 
   /* 文字色彩 */
-  --color-text-primary: #f5f1eb;
-  --color-text-secondary: #a0a0a0;
-  --color-text-muted: #6e7681;
+  --color-text-primary: #1f2937;   /* 深灰黑 */
+  --color-text-secondary: #4b5563; /* 中灰 */
+  --color-text-muted: #9ca3af;     /* 浅灰 */
 
   /* 背景 */
   --background: var(--color-ink);

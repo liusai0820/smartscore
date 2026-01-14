@@ -3,10 +3,10 @@ import { prisma } from '@/lib/db'
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = params.id
+    const { id } = await params
     const body = await request.json()
     const { name, department, presenter, description } = body
 
@@ -32,31 +32,21 @@ export async function PATCH(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = params.id
+    const { id } = await params
 
-    // 1. Delete associated scores first
-    await prisma.score.deleteMany({
-      where: { projectId: id },
-    })
-
-    // 2. Check if this is the current project and reset if so
-    const currentProjectConfig = await prisma.config.findUnique({
-      where: { key: 'current_project' },
-    })
-
-    if (currentProjectConfig?.value === id) {
-      await prisma.config.update({
-        where: { key: 'current_project' },
-        data: { value: '' },
+    await prisma.$transaction(async (tx) => {
+      // 1. Delete associated scores
+      await tx.score.deleteMany({
+        where: { projectId: id },
       })
-    }
 
-    // 3. Delete the project
-    await prisma.project.delete({
-      where: { id },
+      // 2. Delete the project
+      await tx.project.delete({
+        where: { id },
+      })
     })
 
     return NextResponse.json({ success: true })

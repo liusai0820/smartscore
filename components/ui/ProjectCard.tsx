@@ -95,22 +95,22 @@ export default function ProjectCard({ project, currentUser, existingScore, isSco
       {/* 左侧状态指示条 */}
       <div className={clsx(
         "absolute left-0 top-0 bottom-0 w-1 rounded-l-xl",
-        hasConflict ? "bg-[#d4a853]" : isSaved ? "bg-[#7ec699]" : "bg-[#30363d]"
+        hasConflict ? "bg-[#d4a853]" : isSaved ? "bg-[#7ec699]" : "bg-[var(--color-ink-soft)]"
       )} />
 
       {/* 项目信息 */}
       <div className="mb-4">
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
-            <h3 className="text-lg font-bold text-[#f5f1eb] truncate" style={{ fontFamily: 'var(--font-noto-serif)' }}>
+            <h3 className="text-lg font-bold text-[var(--color-text-primary)] truncate" style={{ fontFamily: 'var(--font-noto-serif)' }}>
               {project.name}
             </h3>
-            <div className="flex items-center gap-2 mt-1 text-sm text-[#6e7681]">
+            <div className="flex items-center gap-2 mt-1 text-sm text-[var(--color-text-muted)]">
               <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
               <span className="truncate">{project.presenter}</span>
-              <span className="text-[#30363d]">·</span>
+              <span className="text-[var(--color-ink-soft)]">·</span>
               <span className="truncate">{project.department}</span>
             </div>
           </div>
@@ -124,7 +124,7 @@ export default function ProjectCard({ project, currentUser, existingScore, isSco
           )}
         </div>
         {project.description && (
-          <p className="text-sm text-[#a0a0a0] mt-2 line-clamp-2">{project.description}</p>
+          <p className="text-sm text-[var(--color-text-secondary)] mt-2 line-clamp-2">{project.description}</p>
         )}
       </div>
 
@@ -138,30 +138,30 @@ export default function ProjectCard({ project, currentUser, existingScore, isSco
             <span className="text-sm text-[#d4a853]">利益相关 · 同部门项目无法评分</span>
           </div>
         ) : !isScoringOpen ? (
-          <div className="flex items-center gap-2 p-3 rounded-lg bg-[#21262d] border border-[#30363d]">
-            <svg className="w-5 h-5 text-[#6e7681] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <div className="flex items-center gap-2 p-3 rounded-lg bg-[var(--color-ink-medium)] border border-[var(--color-ink-soft)]">
+            <svg className="w-5 h-5 text-[var(--color-text-muted)] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
-            <span className="text-sm text-[#6e7681]">评分已关闭</span>
+            <span className="text-sm text-[var(--color-text-muted)]">评分已关闭</span>
           </div>
         ) : (
           <div className="space-y-4">
             {/* 总分显示 */}
-            <div className="flex items-center justify-between p-3 rounded-lg bg-[#21262d] border border-[#30363d]">
-              <span className="text-sm font-medium text-[#a0a0a0]">加权总分</span>
+            <div className="flex items-center justify-between p-3 rounded-lg bg-[var(--color-ink-medium)] border border-[var(--color-ink-soft)]">
+              <span className="text-sm font-medium text-[var(--color-text-secondary)]">加权总分</span>
               <span className="text-2xl font-black text-[#d4a853]">{totalScore.toFixed(1)}</span>
             </div>
 
             {/* 4维度评分 */}
             <div className="grid grid-cols-2 gap-3">
               {DIMENSIONS.map((dim) => (
-                <div key={dim.key} className="p-3 rounded-lg bg-[#161b22] border border-[#30363d]">
+                <div key={dim.key} className="p-3 rounded-lg bg-[var(--color-ink-light)] border border-[var(--color-ink-soft)]">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-1.5">
                       <span className="text-base">{dim.icon}</span>
-                      <span className="text-xs font-medium text-[#a0a0a0]">{dim.label}</span>
+                      <span className="text-xs font-medium text-[var(--color-text-secondary)]">{dim.label}</span>
                     </div>
-                    <span className="text-[10px] text-[#6e7681]">{dim.weight}%</span>
+                    <span className="text-[10px] text-[var(--color-text-muted)]">{dim.weight}%</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <input
@@ -171,12 +171,12 @@ export default function ProjectCard({ project, currentUser, existingScore, isSco
                       value={scores[dim.key]}
                       onChange={(e) => handleScoreChange(dim.key, parseInt(e.target.value))}
                       disabled={isSaving}
-                      className="flex-1 h-2 bg-[#21262d] rounded-full appearance-none cursor-pointer"
+                      className="flex-1 h-2 bg-[var(--color-ink-medium)] rounded-full appearance-none cursor-pointer"
                       style={{
-                        background: `linear-gradient(to right, #7ec699 0%, #7ec699 ${(scores[dim.key] - 1) * 11.11}%, #21262d ${(scores[dim.key] - 1) * 11.11}%, #21262d 100%)`
+                        background: `linear-gradient(to right, #7ec699 0%, #7ec699 ${(scores[dim.key] - 1) * 11.11}%, var(--color-ink-medium) ${(scores[dim.key] - 1) * 11.11}%, var(--color-ink-medium) 100%)`
                       }}
                     />
-                    <span className="w-8 text-center text-lg font-bold text-[#f5f1eb]">{scores[dim.key]}</span>
+                    <span className="w-8 text-center text-lg font-bold text-[var(--color-text-primary)]">{scores[dim.key]}</span>
                   </div>
                 </div>
               ))}
@@ -198,10 +198,10 @@ export default function ProjectCard({ project, currentUser, existingScore, isSco
                 className={clsx(
                   "px-5 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 flex items-center gap-2",
                   isSaved && !hasChanges()
-                    ? "bg-[#21262d] text-[#6e7681] cursor-not-allowed"
+                    ? "bg-[var(--color-ink-medium)] text-[var(--color-text-muted)] cursor-not-allowed"
                     : isSaved
-                    ? "bg-[#21262d] text-[#f5f1eb] hover:bg-[#30363d] border border-[#30363d] hover:border-[#d4a853]"
-                    : "vermilion-gradient text-[#f5f1eb] shadow-lg shadow-[#c53d43]/20 hover:shadow-xl hover:shadow-[#c53d43]/30 hover:scale-[1.02]"
+                    ? "bg-[var(--color-ink-medium)] text-[var(--color-text-primary)] hover:bg-[var(--color-ink-soft)] border border-[var(--color-ink-soft)] hover:border-[#d4a853]"
+                    : "vermilion-gradient text-[var(--color-text-primary)] shadow-lg shadow-[#c53d43]/20 hover:shadow-xl hover:shadow-[#c53d43]/30 hover:scale-[1.02]"
                 )}
               >
                 {isSaving ? (

@@ -43,7 +43,7 @@ export default function ScoreInput({ value, onChange, disabled }: ScoreInputProp
       <div className="flex items-center gap-4">
         <div className="flex-1 relative">
           {/* 滑块轨道背景 */}
-          <div className="absolute inset-0 h-2 top-1/2 -translate-y-1/2 rounded-full bg-[#21262d]" />
+          <div className="absolute inset-0 h-2 top-1/2 -translate-y-1/2 rounded-full bg-[var(--color-ink-medium)]" />
           {/* 滑块进度条 */}
           <div
             className="absolute h-2 top-1/2 -translate-y-1/2 rounded-full transition-all duration-150"
@@ -73,14 +73,14 @@ export default function ScoreInput({ value, onChange, disabled }: ScoreInputProp
             value={localValue}
             onChange={(e) => handleChange(parseInt(e.target.value) || 0)}
             disabled={disabled}
-            className="w-16 h-10 text-center text-lg font-bold rounded-lg bg-[#21262d] border border-[#30363d] text-[#f5f1eb] focus:outline-none focus:border-[#d4a853] focus:ring-1 focus:ring-[#d4a853]/50 disabled:opacity-50 transition-all"
+            className="w-16 h-10 text-center text-lg font-bold rounded-lg bg-[var(--color-ink-medium)] border border-[var(--color-ink-soft)] text-[var(--color-text-primary)] focus:outline-none focus:border-[#d4a853] focus:ring-1 focus:ring-[#d4a853]/50 disabled:opacity-50 transition-all"
           />
         </div>
       </div>
 
       {/* 分数标签 */}
       <div className="flex justify-between items-center text-xs">
-        <div className="flex gap-4 text-[#6e7681]">
+        <div className="flex gap-4 text-[var(--color-text-muted)]">
           <span>0 较差</span>
           <span>50 中等</span>
           <span>100 优秀</span>

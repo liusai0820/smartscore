@@ -45,14 +45,14 @@ export default function LoginForm({ users }: { users: Pick<User, 'id' | 'name' |
         {/* 标题区 */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl vermilion-gradient shadow-lg shadow-[#c53d43]/30 mb-4">
-            <svg className="w-8 h-8 text-[#f5f1eb]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="w-8 h-8 text-[var(--color-text-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-[#f5f1eb] mb-2" style={{ fontFamily: 'var(--font-noto-serif)' }}>
+          <h1 className="text-2xl font-bold text-[var(--color-text-primary)] mb-2" style={{ fontFamily: 'var(--font-noto-serif)' }}>
             评审员登录
           </h1>
-          <p className="text-[#6e7681] text-sm">
+          <p className="text-[var(--color-text-muted)] text-sm">
             请选择您的身份并输入密码
           </p>
         </div>
@@ -82,7 +82,7 @@ export default function LoginForm({ users }: { users: Pick<User, 'id' | 'name' |
                 ))}
               </select>
               <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                <svg className="w-5 h-5 text-[#6e7681]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <svg className="w-5 h-5 text-[var(--color-text-muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
               </div>
@@ -121,7 +121,7 @@ export default function LoginForm({ users }: { users: Pick<User, 'id' | 'name' |
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-4 rounded-xl vermilion-gradient text-[#f5f1eb] font-bold text-lg shadow-lg shadow-[#c53d43]/30 transition-all duration-300 hover:shadow-xl hover:shadow-[#c53d43]/40 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
+            className="w-full py-4 rounded-xl vermilion-gradient text-[var(--color-text-primary)] font-bold text-lg shadow-lg shadow-[#c53d43]/30 transition-all duration-300 hover:shadow-xl hover:shadow-[#c53d43]/40 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
           >
             {loading ? (
               <>
@@ -143,8 +143,8 @@ export default function LoginForm({ users }: { users: Pick<User, 'id' | 'name' |
         </form>
 
         {/* 底部提示 */}
-        <div className="mt-6 pt-6 border-t border-[#30363d] text-center">
-          <p className="text-[#6e7681] text-xs">
+        <div className="mt-6 pt-6 border-t border-[var(--color-ink-soft)] text-center">
+          <p className="text-[var(--color-text-muted)] text-xs">
             如忘记密码，请联系系统管理员
           </p>
         </div>

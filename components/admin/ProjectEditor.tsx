@@ -45,7 +45,7 @@ export default function ProjectEditor({ project, onSave, onCancel }: ProjectEdit
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-[#f5f1eb] mb-1">
+        <label className="block text-sm font-medium text-[var(--color-text-primary)] mb-1">
           项目名称
         </label>
         <input
@@ -53,14 +53,14 @@ export default function ProjectEditor({ project, onSave, onCancel }: ProjectEdit
           required
           value={formData.name}
           onChange={e => setFormData({ ...formData, name: e.target.value })}
-          className="w-full px-3 py-2 bg-[#0d1117] border border-[#30363d] rounded-lg text-[#f5f1eb] focus:outline-none focus:border-[#58a6ff]"
+          className="w-full px-3 py-2 bg-[var(--color-ink-medium)] border border-[var(--color-ink-soft)] rounded-lg text-[var(--color-text-primary)] focus:outline-none focus:border-[#58a6ff]"
           placeholder="请输入项目名称"
         />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-[#f5f1eb] mb-1">
+          <label className="block text-sm font-medium text-[var(--color-text-primary)] mb-1">
             所属部门
           </label>
           <input
@@ -68,12 +68,12 @@ export default function ProjectEditor({ project, onSave, onCancel }: ProjectEdit
             required
             value={formData.department}
             onChange={e => setFormData({ ...formData, department: e.target.value })}
-            className="w-full px-3 py-2 bg-[#0d1117] border border-[#30363d] rounded-lg text-[#f5f1eb] focus:outline-none focus:border-[#58a6ff]"
+            className="w-full px-3 py-2 bg-[var(--color-ink-medium)] border border-[var(--color-ink-soft)] rounded-lg text-[var(--color-text-primary)] focus:outline-none focus:border-[#58a6ff]"
             placeholder="例如：技术部"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-[#f5f1eb] mb-1">
+          <label className="block text-sm font-medium text-[var(--color-text-primary)] mb-1">
             汇报人
           </label>
           <input
@@ -81,21 +81,21 @@ export default function ProjectEditor({ project, onSave, onCancel }: ProjectEdit
             required
             value={formData.presenter}
             onChange={e => setFormData({ ...formData, presenter: e.target.value })}
-            className="w-full px-3 py-2 bg-[#0d1117] border border-[#30363d] rounded-lg text-[#f5f1eb] focus:outline-none focus:border-[#58a6ff]"
+            className="w-full px-3 py-2 bg-[var(--color-ink-medium)] border border-[var(--color-ink-soft)] rounded-lg text-[var(--color-text-primary)] focus:outline-none focus:border-[#58a6ff]"
             placeholder="例如：张三"
           />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-[#f5f1eb] mb-1">
+        <label className="block text-sm font-medium text-[var(--color-text-primary)] mb-1">
           项目描述
         </label>
         <textarea
           rows={3}
           value={formData.description || ''}
           onChange={e => setFormData({ ...formData, description: e.target.value })}
-          className="w-full px-3 py-2 bg-[#0d1117] border border-[#30363d] rounded-lg text-[#f5f1eb] focus:outline-none focus:border-[#58a6ff] resize-none"
+          className="w-full px-3 py-2 bg-[var(--color-ink-medium)] border border-[var(--color-ink-soft)] rounded-lg text-[var(--color-text-primary)] focus:outline-none focus:border-[#58a6ff] resize-none"
           placeholder="可选：输入项目简要描述"
         />
       </div>
@@ -104,12 +104,12 @@ export default function ProjectEditor({ project, onSave, onCancel }: ProjectEdit
         <div className="text-red-400 text-sm">{error}</div>
       )}
 
-      <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#30363d]">
+      <div className="flex items-center justify-end gap-3 pt-4 border-t border-[var(--color-ink-soft)]">
         <button
           type="button"
           onClick={onCancel}
           disabled={loading}
-          className="px-4 py-2 text-sm text-[#f5f1eb] hover:bg-[#30363d] rounded-lg transition-colors"
+          className="px-4 py-2 text-sm text-[var(--color-text-primary)] hover:bg-[var(--color-ink-soft)] rounded-lg transition-colors"
         >
           取消
         </button>

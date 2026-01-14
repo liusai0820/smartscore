@@ -76,14 +76,14 @@ export default function LiveRanking() {
 
   if (loading && !data) {
     return (
-      <div className="min-h-screen bg-[#0d1117] flex items-center justify-center">
+      <div className="min-h-screen bg-[var(--color-ink)] flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 mx-auto mb-6 rounded-2xl vermilion-gradient flex items-center justify-center animate-pulse">
-            <svg className="w-8 h-8 text-[#f5f1eb]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="w-8 h-8 text-[var(--color-text-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <p className="text-[#6e7681] text-xl">正在加载数据...</p>
+          <p className="text-[var(--color-text-muted)] text-xl">正在加载数据...</p>
         </div>
       </div>
     )
@@ -101,7 +101,7 @@ export default function LiveRanking() {
   const deptHeads = reviewerStatuses.filter(r => r.role === 'DEPT_HEAD')
 
   return (
-    <div className="min-h-screen bg-[#0d1117] ink-gradient cloud-pattern text-[#f5f1eb] p-8 overflow-hidden">
+    <div className="min-h-screen bg-[var(--color-ink)] ink-gradient cloud-pattern text-[var(--color-text-primary)] p-8 overflow-hidden">
       {/* 装饰性背景 */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-48 -left-48 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-[#c53d43]/10 to-transparent blur-3xl" />
@@ -112,7 +112,7 @@ export default function LiveRanking() {
       <header className="relative z-10 mb-8 text-center">
         <div className="inline-flex items-center gap-4 mb-4">
           <div className="w-14 h-14 rounded-2xl vermilion-gradient flex items-center justify-center shadow-lg shadow-[#c53d43]/30">
-            <svg className="w-7 h-7 text-[#f5f1eb]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="w-7 h-7 text-[var(--color-text-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
@@ -127,13 +127,13 @@ export default function LiveRanking() {
           "inline-flex items-center gap-3 px-6 py-3 rounded-full text-lg font-bold",
           state === 'SCORING' ? "bg-[#7ec699]/15 text-[#7ec699] border border-[#7ec699]/30" :
           state === 'REVEALED' ? "bg-[#d4a853]/15 text-[#d4a853] border border-[#d4a853]/30" :
-          "bg-[#30363d] text-[#6e7681] border border-[#30363d]"
+          "bg-[var(--color-ink-soft)] text-[var(--color-text-muted)] border border-[var(--color-ink-soft)]"
         )}>
           <span className={clsx(
             "w-3 h-3 rounded-full",
             state === 'SCORING' ? "bg-[#7ec699] animate-pulse" :
             state === 'REVEALED' ? "bg-[#d4a853]" :
-            "bg-[#6e7681]"
+            "bg-[var(--color-text-muted)]"
           )} />
           {state === 'SCORING' ? '评分进行中' :
            state === 'REVEALED' ? '最终排名' :
@@ -146,13 +146,13 @@ export default function LiveRanking() {
         {/* 等待状态 */}
         {state === 'CLOSED' && (
           <div className="text-center py-24">
-            <div className="w-24 h-24 mx-auto mb-8 rounded-2xl bg-[#161b22] border border-[#30363d] flex items-center justify-center">
-              <svg className="w-12 h-12 text-[#30363d]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <div className="w-24 h-24 mx-auto mb-8 rounded-2xl bg-[var(--color-ink-light)] border border-[var(--color-ink-soft)] flex items-center justify-center">
+              <svg className="w-12 h-12 text-[var(--color-ink-soft)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <p className="text-3xl text-[#6e7681] mb-4">请等待管理员开启评分</p>
-            <p className="text-lg text-[#30363d]">评分开始后，此页面将自动更新</p>
+            <p className="text-3xl text-[var(--color-text-muted)] mb-4">请等待管理员开启评分</p>
+            <p className="text-lg text-[var(--color-ink-soft)]">评分开始后，此页面将自动更新</p>
           </div>
         )}
 
@@ -166,17 +166,17 @@ export default function LiveRanking() {
                   <div className="text-sm text-[#7ec699] uppercase tracking-widest mb-2 font-medium">
                     当前评审项目
                   </div>
-                  <h2 className="text-4xl md:text-5xl font-black text-[#f5f1eb] mb-4" style={{ fontFamily: 'var(--font-noto-serif)' }}>
+                  <h2 className="text-4xl md:text-5xl font-black text-[var(--color-text-primary)] mb-4" style={{ fontFamily: 'var(--font-noto-serif)' }}>
                     {currentProject.name}
                   </h2>
-                  <div className="flex items-center justify-center gap-4 text-[#6e7681]">
+                  <div className="flex items-center justify-center gap-4 text-[var(--color-text-muted)]">
                     <span className="flex items-center gap-2">
                       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                       </svg>
                       {currentProject.department}
                     </span>
-                    <span className="text-[#30363d]">·</span>
+                    <span className="text-[var(--color-ink-soft)]">·</span>
                     <span className="flex items-center gap-2">
                       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -185,26 +185,26 @@ export default function LiveRanking() {
                     </span>
                   </div>
                   {currentProject.description && (
-                    <p className="mt-4 text-[#6e7681] max-w-2xl mx-auto">{currentProject.description}</p>
+                    <p className="mt-4 text-[var(--color-text-muted)] max-w-2xl mx-auto">{currentProject.description}</p>
                   )}
                 </div>
 
                 {/* 进度统计 */}
                 <div className="mt-8 flex items-center justify-center gap-6">
-                  <div className="bg-[#161b22] border border-[#30363d] rounded-2xl px-8 py-4">
+                  <div className="bg-[var(--color-ink-light)] border border-[var(--color-ink-soft)] rounded-2xl px-8 py-4">
                     <div className="text-5xl font-black text-[#7ec699]">{votedCount}</div>
-                    <div className="text-sm text-[#6e7681]">已评分</div>
+                    <div className="text-sm text-[var(--color-text-muted)]">已评分</div>
                   </div>
-                  <div className="text-4xl text-[#30363d]">/</div>
-                  <div className="bg-[#161b22] border border-[#30363d] rounded-2xl px-8 py-4">
-                    <div className="text-5xl font-black text-[#6e7681]">{totalReviewers}</div>
-                    <div className="text-sm text-[#6e7681]">总评委</div>
+                  <div className="text-4xl text-[var(--color-ink-soft)]">/</div>
+                  <div className="bg-[var(--color-ink-light)] border border-[var(--color-ink-soft)] rounded-2xl px-8 py-4">
+                    <div className="text-5xl font-black text-[var(--color-text-muted)]">{totalReviewers}</div>
+                    <div className="text-sm text-[var(--color-text-muted)]">总评委</div>
                   </div>
                 </div>
               </div>
             ) : (
               <div className="text-center py-12">
-                <div className="text-[#6e7681] text-xl">请在管理端选择当前评审项目</div>
+                <div className="text-[var(--color-text-muted)] text-xl">请在管理端选择当前评审项目</div>
               </div>
             )}
 
@@ -219,10 +219,10 @@ export default function LiveRanking() {
                         <path strokeLinecap="round" strokeLinejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                       </svg>
                     </div>
-                    <h3 className="text-xl font-bold text-[#f5f1eb]" style={{ fontFamily: 'var(--font-noto-serif)' }}>
-                      中心领导/总工 <span className="text-[#6e7681] font-normal text-base ml-2">（权重 60%）</span>
+                    <h3 className="text-xl font-bold text-[var(--color-text-primary)]" style={{ fontFamily: 'var(--font-noto-serif)' }}>
+                      中心领导/总工 <span className="text-[var(--color-text-muted)] font-normal text-base ml-2">（权重 60%）</span>
                     </h3>
-                    <div className="ml-auto text-sm text-[#6e7681]">
+                    <div className="ml-auto text-sm text-[var(--color-text-muted)]">
                       {leaders.filter(l => l.hasVoted).length} / {leaders.length}
                     </div>
                   </div>
@@ -241,10 +241,10 @@ export default function LiveRanking() {
                         <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                       </svg>
                     </div>
-                    <h3 className="text-xl font-bold text-[#f5f1eb]" style={{ fontFamily: 'var(--font-noto-serif)' }}>
-                      各所/部负责人 <span className="text-[#6e7681] font-normal text-base ml-2">（权重 40%）</span>
+                    <h3 className="text-xl font-bold text-[var(--color-text-primary)]" style={{ fontFamily: 'var(--font-noto-serif)' }}>
+                      各所/部负责人 <span className="text-[var(--color-text-muted)] font-normal text-base ml-2">（权重 40%）</span>
                     </h3>
-                    <div className="ml-auto text-sm text-[#6e7681]">
+                    <div className="ml-auto text-sm text-[var(--color-text-muted)]">
                       {deptHeads.filter(d => d.hasVoted).length} / {deptHeads.length}
                     </div>
                   </div>
@@ -271,8 +271,8 @@ export default function LiveRanking() {
                   className={clsx(
                     "px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 hover:scale-105 active:scale-95",
                     viewMode === mode
-                      ? "bg-[#d4a853] text-[#0d1117] shadow-lg shadow-[#d4a853]/20"
-                      : "bg-[#161b22] text-[#6e7681] border border-[#30363d] hover:border-[#d4a853]/50 hover:text-[#f5f1eb]"
+                      ? "bg-[#d4a853] text-[var(--color-ink)] shadow-lg shadow-[#d4a853]/20"
+                      : "bg-[var(--color-ink-light)] text-[var(--color-text-muted)] border border-[var(--color-ink-soft)] hover:border-[#d4a853]/50 hover:text-[var(--color-text-primary)]"
                   )}
                 >
                   {mode === 'OVERALL' && '总榜单'}
@@ -297,7 +297,7 @@ export default function LiveRanking() {
                       index === 0 ? "medal-gold" :
                       index === 1 ? "medal-silver" :
                       index === 2 ? "medal-bronze" :
-                      "bg-[#21262d] border border-[#30363d]"
+                      "bg-[var(--color-ink-medium)] border border-[var(--color-ink-soft)]"
                     )}>
                       {index < 3 ? (
                         <>
@@ -310,30 +310,30 @@ export default function LiveRanking() {
                         </>
                       ) : (
                         <>
-                          <span className="text-xs text-[#6e7681]">第</span>
-                          <span className="text-2xl font-black text-[#a0a0a0]">{index + 1}</span>
-                          <span className="text-xs text-[#6e7681]">名</span>
+                          <span className="text-xs text-[var(--color-text-muted)]">第</span>
+                          <span className="text-2xl font-black text-[var(--color-text-secondary)]">{index + 1}</span>
+                          <span className="text-xs text-[var(--color-text-muted)]">名</span>
                         </>
                       )}
                     </div>
 
                     {/* 项目信息 */}
                     <div className="flex-grow z-10">
-                      <h3 className="text-2xl font-bold text-[#f5f1eb] mb-1" style={{ fontFamily: 'var(--font-noto-serif)' }}>
+                      <h3 className="text-2xl font-bold text-[var(--color-text-primary)] mb-1" style={{ fontFamily: 'var(--font-noto-serif)' }}>
                         {project.name}
                       </h3>
-                      <p className="text-[#6e7681] flex items-center gap-2">
+                      <p className="text-[var(--color-text-muted)] flex items-center gap-2">
                         <span>{project.presenter}</span>
-                        <span className="text-[#30363d]">·</span>
+                        <span className="text-[var(--color-ink-soft)]">·</span>
                         <span>{project.department}</span>
-                        <span className="text-[#30363d]">·</span>
+                        <span className="text-[var(--color-ink-soft)]">·</span>
                         <span className="text-[#7ec699]">{project.scoreCount} 票</span>
                       </p>
                     </div>
 
                     {/* 最终得分 */}
                     <div className="text-right z-10 min-w-[140px]">
-                      <div className="text-xs text-[#6e7681] uppercase tracking-widest mb-1">最终得分</div>
+                      <div className="text-xs text-[var(--color-text-muted)] uppercase tracking-widest mb-1">最终得分</div>
                       <div className={clsx(
                         "text-5xl font-black",
                         index === 0 ? "text-[#ffd700]" :
@@ -378,10 +378,10 @@ export default function LiveRanking() {
                     .slice(0, 3)
 
                   return (
-                    <div key={dim.key} className="bg-[#161b22] border border-[#30363d] rounded-2xl p-6 relative overflow-hidden">
+                    <div key={dim.key} className="bg-[var(--color-ink-light)] border border-[var(--color-ink-soft)] rounded-2xl p-6 relative overflow-hidden">
                       <div className="flex items-center gap-3 mb-6 relative z-10">
                         <span className="text-3xl">{dim.icon}</span>
-                        <h3 className="text-xl font-bold text-[#f5f1eb]">{dim.title}</h3>
+                        <h3 className="text-xl font-bold text-[var(--color-text-primary)]">{dim.title}</h3>
                       </div>
 
                       <div className="space-y-4 relative z-10">
@@ -396,8 +396,8 @@ export default function LiveRanking() {
                               {i + 1}
                             </div>
                             <div className="flex-grow min-w-0">
-                              <div className="text-[#f5f1eb] font-medium truncate">{p.name}</div>
-                              <div className="text-xs text-[#6e7681] truncate">{p.presenter}</div>
+                              <div className="text-[var(--color-text-primary)] font-medium truncate">{p.name}</div>
+                              <div className="text-xs text-[var(--color-text-muted)] truncate">{p.presenter}</div>
                             </div>
                             <div className="text-[#7ec699] font-mono font-bold">
                               {(p[dim.key as keyof Result] as number)?.toFixed(1)}
@@ -417,7 +417,7 @@ export default function LiveRanking() {
             {/* 共识度排名视图 */}
             {viewMode === 'CONSISTENCY' && (
               <div className="space-y-4">
-                <div className="bg-[#161b22]/50 p-4 rounded-xl border border-[#30363d] text-center mb-4 text-[#6e7681] text-sm animate-fade-in-up">
+                <div className="bg-[var(--color-ink-light)]/50 p-4 rounded-xl border border-[var(--color-ink-soft)] text-center mb-4 text-[var(--color-text-muted)] text-sm animate-fade-in-up">
                   * 争议度越低（标准差越小），说明评委意见越统一，共识度越高
                 </div>
                 {[...results]
@@ -428,27 +428,27 @@ export default function LiveRanking() {
                     className="relative float-card p-6 flex items-center gap-6 overflow-hidden animate-fade-in-up"
                     style={{ animationDelay: `${index * 0.15}s` }}
                   >
-                    <div className="w-16 h-16 rounded-2xl bg-[#21262d] border border-[#30363d] flex flex-col items-center justify-center text-[#6e7681]">
+                    <div className="w-16 h-16 rounded-2xl bg-[var(--color-ink-medium)] border border-[var(--color-ink-soft)] flex flex-col items-center justify-center text-[var(--color-text-muted)]">
                       <span className="text-xs">共识</span>
-                      <span className="text-xl font-bold text-[#f5f1eb]">{index + 1}</span>
+                      <span className="text-xl font-bold text-[var(--color-text-primary)]">{index + 1}</span>
                     </div>
 
                     <div className="flex-grow z-10">
-                      <h3 className="text-2xl font-bold text-[#f5f1eb] mb-1" style={{ fontFamily: 'var(--font-noto-serif)' }}>
+                      <h3 className="text-2xl font-bold text-[var(--color-text-primary)] mb-1" style={{ fontFamily: 'var(--font-noto-serif)' }}>
                         {project.name}
                       </h3>
-                      <p className="text-[#6e7681] flex items-center gap-2">
+                      <p className="text-[var(--color-text-muted)] flex items-center gap-2">
                         <span>{project.presenter}</span>
-                        <span className="text-[#30363d]">·</span>
+                        <span className="text-[var(--color-ink-soft)]">·</span>
                         <span>{project.department}</span>
                       </p>
                     </div>
 
                     <div className="text-right z-10 min-w-[140px]">
-                      <div className="text-xs text-[#6e7681] uppercase tracking-widest mb-1">争议指数</div>
+                      <div className="text-xs text-[var(--color-text-muted)] uppercase tracking-widest mb-1">争议指数</div>
                       <div className={clsx(
                         "text-4xl font-black",
-                        index < 3 ? "text-[#7ec699]" : "text-[#6e7681]"
+                        index < 3 ? "text-[#7ec699]" : "text-[var(--color-text-muted)]"
                       )}>
                         {project.standardDeviation?.toFixed(2) || '-'}
                       </div>
@@ -471,10 +471,10 @@ export default function LiveRanking() {
 
       {/* 底部装饰 */}
       <footer className="relative z-10 mt-12 text-center">
-        <div className="flex items-center justify-center gap-3 text-[#30363d] text-sm">
-          <div className="w-12 h-px bg-gradient-to-r from-transparent via-[#30363d] to-transparent" />
+        <div className="flex items-center justify-center gap-3 text-[var(--color-ink-soft)] text-sm">
+          <div className="w-12 h-px bg-gradient-to-r from-transparent via-[var(--color-ink-soft)] to-transparent" />
           <span>智评 SmartScore</span>
-          <div className="w-12 h-px bg-gradient-to-r from-transparent via-[#30363d] to-transparent" />
+          <div className="w-12 h-px bg-gradient-to-r from-transparent via-[var(--color-ink-soft)] to-transparent" />
         </div>
       </footer>
     </div>
@@ -495,13 +495,13 @@ function ReviewerCard({
   const colorClasses = {
     vermilion: {
       voted: 'border-[#7ec699] bg-gradient-to-br from-[#7ec699]/20 to-[#5fb3b3]/10 shadow-lg shadow-[#7ec699]/20',
-      notVoted: 'border-[#30363d] bg-[#161b22]/80',
+      notVoted: 'border-[var(--color-ink-soft)] bg-[var(--color-ink-light)]/80',
       badge: 'bg-[#c53d43]',
       glow: 'shadow-[#7ec699]/40'
     },
     gold: {
       voted: 'border-[#7ec699] bg-gradient-to-br from-[#7ec699]/20 to-[#5fb3b3]/10 shadow-lg shadow-[#7ec699]/20',
-      notVoted: 'border-[#30363d] bg-[#161b22]/80',
+      notVoted: 'border-[var(--color-ink-soft)] bg-[var(--color-ink-light)]/80',
       badge: 'bg-[#d4a853]',
       glow: 'shadow-[#7ec699]/40'
     }
@@ -538,8 +538,8 @@ function ReviewerCard({
         <div className={clsx(
           "w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-2 transition-all duration-500",
           hasVoted
-            ? "bg-[#7ec699] text-[#0d1117]"
-            : "bg-[#21262d] text-[#6e7681]"
+            ? "bg-[#7ec699] text-[var(--color-ink)]"
+            : "bg-[var(--color-ink-medium)] text-[var(--color-text-muted)]"
         )}>
           {hasVoted ? (
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
@@ -553,7 +553,7 @@ function ReviewerCard({
         {/* 名称 */}
         <div className={clsx(
           "text-xs font-medium text-center truncate w-full px-1 transition-colors duration-500",
-          hasVoted ? "text-[#f5f1eb]" : "text-[#6e7681]"
+          hasVoted ? "text-[var(--color-text-primary)]" : "text-[var(--color-text-muted)]"
         )}>
           {reviewer.name.length > 6 ? reviewer.name.slice(0, 6) + '...' : reviewer.name}
         </div>
@@ -563,7 +563,7 @@ function ReviewerCard({
           "absolute top-1 right-1 w-3 h-3 rounded-full transition-all duration-500",
           hasVoted
             ? "bg-[#7ec699] animate-pulse"
-            : "bg-[#30363d]"
+            : "bg-[var(--color-ink-soft)]"
         )} />
       </div>
     </div>
