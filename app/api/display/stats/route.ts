@@ -29,8 +29,9 @@ export async function GET() {
     const state = stateConfig?.value || 'CLOSED'
     const currentProjectId = projectConfig?.value || null
 
-    // Get all reviewers
+    // Get all active reviewers (only show enabled users)
     const allReviewers = await prisma.user.findMany({
+      where: { isActive: true },
       orderBy: [{ role: 'asc' }, { id: 'asc' }]
     })
 
