@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/db'
 import AdminControls from '@/components/admin/AdminControls'
 import DataUpload from '@/components/admin/DataUpload'
+import ReviewerManager from '@/components/admin/ReviewerManager'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { isAdminAuthenticated } from '@/lib/admin-auth'
@@ -20,12 +21,25 @@ export default async function AdminPage() {
 
   // Quick stats
   const userCount = await prisma.user.count()
+  const activeUserCount = await prisma.user.count({ where: { isActive: true } })
   const projectCount = await prisma.project.count()
   const scoreCount = await prisma.score.count()
 
   // Get all projects for selection
   const projects = await prisma.project.findMany({
-    orderBy: { id: 'asc' }
+    orderBy: { createdAt: 'asc' }
+  })
+
+  // Get all users for reviewer management
+  const users = await prisma.user.findMany({
+    orderBy: [{ role: 'asc' }, { createdAt: 'asc' }],
+    select: {
+      id: true,
+      name: true,
+      role: true,
+      department: true,
+      isActive: true
+    }
   })
 
   return (
@@ -96,8 +110,8 @@ export default async function AdminPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
             </div>
-            <div className="text-3xl font-black text-[var(--color-text-primary)] mb-1">{userCount}</div>
-            <div className="text-[var(--color-text-muted)] text-sm">评审员</div>
+            <div className="text-3xl font-black text-[var(--color-text-primary)] mb-1">{activeUserCount}/{userCount}</div>
+            <div className="text-[var(--color-text-muted)] text-sm">评审员在线</div>
           </div>
           <div className="float-card p-5 text-center group">
             <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-[#d4a853]/10 border border-[#d4a853]/20 flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -129,6 +143,11 @@ export default async function AdminPage() {
         {/* 数据上传 */}
         <div className="mt-8">
           <DataUpload />
+        </div>
+
+        {/* 评审员管理 */}
+        <div className="mt-8">
+          <ReviewerManager users={users} />
         </div>
       </div>
     </div>

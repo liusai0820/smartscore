@@ -30,6 +30,8 @@ Extract the following fields for each project found:
 - presenter: The name of the person presenting or in charge.
 - description: A brief description of the project (if available).
 
+CRITICAL: You MUST preserve the exact order in which projects appear in the original text. Do not reorder, sort, or rearrange the projects in any way. The order of items in your output array must match the order they appear in the input.
+
 Return the data strictly as a JSON object with a "projects" key containing an array of objects.
 Example format:
 {

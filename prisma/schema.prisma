@@ -17,6 +17,7 @@ model User {
   role       String   // "LEADER" or "DEPT_HEAD"
   department String
   passcode   String
+  isActive   Boolean  @default(true) // 是否启用（用于临时禁用评审员）
   scores     Score[]
   createdAt  DateTime @default(now())
 }

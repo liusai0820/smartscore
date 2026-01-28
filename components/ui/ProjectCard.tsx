@@ -153,17 +153,17 @@ export default function ProjectCard({ project, currentUser, existingScore, isSco
             </div>
 
             {/* 4维度评分 */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {DIMENSIONS.map((dim) => (
                 <div key={dim.key} className="p-3 rounded-lg bg-[var(--color-ink-light)] border border-[var(--color-ink-soft)]">
                   <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-base">{dim.icon}</span>
-                      <span className="text-xs font-medium text-[var(--color-text-secondary)]">{dim.label}</span>
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <span className="text-base flex-shrink-0">{dim.icon}</span>
+                      <span className="text-xs font-medium text-[var(--color-text-secondary)] truncate">{dim.label}</span>
                     </div>
-                    <span className="text-[10px] text-[var(--color-text-muted)]">{dim.weight}%</span>
+                    <span className="text-[10px] text-[var(--color-text-muted)] flex-shrink-0 ml-1">{dim.weight}%</span>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3">
                     <input
                       type="range"
                       min="1"
@@ -171,12 +171,12 @@ export default function ProjectCard({ project, currentUser, existingScore, isSco
                       value={scores[dim.key]}
                       onChange={(e) => handleScoreChange(dim.key, parseInt(e.target.value))}
                       disabled={isSaving}
-                      className="flex-1 h-2 bg-[var(--color-ink-medium)] rounded-full appearance-none cursor-pointer"
+                      className="flex-1 h-2 bg-[var(--color-ink-medium)] rounded-full appearance-none cursor-pointer min-w-0"
                       style={{
                         background: `linear-gradient(to right, #7ec699 0%, #7ec699 ${(scores[dim.key] - 1) * 11.11}%, var(--color-ink-medium) ${(scores[dim.key] - 1) * 11.11}%, var(--color-ink-medium) 100%)`
                       }}
                     />
-                    <span className="w-8 text-center text-lg font-bold text-[var(--color-text-primary)]">{scores[dim.key]}</span>
+                    <span className="w-10 text-center text-lg font-bold text-[var(--color-text-primary)] flex-shrink-0">{scores[dim.key]}</span>
                   </div>
                 </div>
               ))}
