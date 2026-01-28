@@ -9,28 +9,28 @@ async function main() {
   const stateConfig = await prisma.config.findUnique({ where: { key: 'scoring_state' } })
 
   if (stateConfig?.value !== 'SCORING') {
-    console.error('❌ Error: System is not in SCORING state. Please start scoring in Admin panel first.')
+    console.error('Error: System is not in SCORING state. Please start scoring in Admin panel first.')
     return
   }
 
   const projectId = projectConfig?.value
   if (!projectId) {
-    console.error('❌ Error: No project is currently selected.')
+    console.error('Error: No project is currently selected.')
     return
   }
 
   const project = await prisma.project.findUnique({ where: { id: projectId } })
   if (!project) {
-    console.error('❌ Error: Project not found.')
+    console.error('Error: Project not found.')
     return
   }
 
-  console.log(`🚀 Simulating votes for project: ${project.name} (${project.department})`)
+  console.log(`Simulating votes for project: ${project.name} (${project.department})`)
 
   // 2. Get all users
   const users = await prisma.user.findMany()
 
-  // 3. Simulate votes
+  // 3. Simulate votes with DIKI 6 dimensions
   let votedCount = 0
   let skippedCount = 0
 
@@ -57,21 +57,21 @@ async function main() {
       continue
     }
 
-    // Generate random scores (7-10 range mostly, occasionally lower)
-    // Bias towards 8 and 9
-    const randomScore = () => {
-      const r = Math.random()
-      if (r > 0.8) return 10
-      if (r > 0.4) return 9
-      if (r > 0.1) return 8
-      return 7
+    // Generate random DIKI scores
+    // Different max values: Data/Insight=20, others=15
+    const randomScore = (max: number) => {
+      const base = Math.floor(max * 0.6) // Start from 60% of max
+      const range = Math.floor(max * 0.35) // Add up to 35% more
+      return base + Math.floor(Math.random() * range)
     }
 
     const scores = {
-      valueScore: randomScore(),
-      innovScore: randomScore(),
-      feasiScore: randomScore(),
-      outputScore: randomScore()
+      dataScore: randomScore(20),      // max 20
+      infoScore: randomScore(15),      // max 15
+      knowScore: randomScore(15),      // max 15
+      insightScore: randomScore(20),   // max 20
+      approvalScore: randomScore(15),  // max 15
+      awardScore: randomScore(15)      // max 15
     }
 
     await prisma.score.create({
@@ -83,10 +83,9 @@ async function main() {
     })
 
     votedCount++
-    // Small delay to make it feel "live" if watching the screen (optional, removed for speed)
   }
 
-  console.log(`\n✅ Simulation Complete!`)
+  console.log(`\nSimulation Complete!`)
   console.log(`   - Voted: ${votedCount}`)
   console.log(`   - Skipped (Conflict): ${skippedCount}`)
 }
