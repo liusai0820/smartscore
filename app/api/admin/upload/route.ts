@@ -23,18 +23,14 @@ export async function POST(request: Request) {
     const results = {
       usersCreated: 0,
       projectsCreated: 0,
+      projectsCleared: 0,
     }
 
     // Transaction to ensure data consistency
     await prisma.$transaction(async (tx) => {
+      // 处理评审员数据 - 增量添加
       if (users && Array.isArray(users)) {
         for (const user of users) {
-          // Check if user exists to avoid duplicates or update them
-          // For simplicity in this seed endpoint, we'll upsert by name if possible,
-          // but schema doesn't have unique constraint on name.
-          // Let's just create new ones or check existence.
-          // Better: Check existence by name.
-
           const existing = await tx.user.findFirst({ where: { name: user.name } })
           if (!existing) {
             await tx.user.create({
@@ -50,28 +46,45 @@ export async function POST(request: Request) {
         }
       }
 
-      if (projects && Array.isArray(projects)) {
+      // 处理项目数据 - 先清空再导入
+      if (projects && Array.isArray(projects) && projects.length > 0) {
+        // 清空现有评分
+        await tx.score.deleteMany()
+
+        // 清空现有项目
+        const deleted = await tx.project.deleteMany()
+        results.projectsCleared = deleted.count
+
+        // 重置评分状态
+        await tx.config.upsert({
+          where: { key: 'scoring_state' },
+          update: { value: 'CLOSED' },
+          create: { key: 'scoring_state', value: 'CLOSED' }
+        })
+
+        // 清除当前项目选择
+        await tx.config.deleteMany({
+          where: { key: 'current_project' }
+        })
+
+        // 创建新项目
         for (const project of projects) {
-          // Check if project exists by name
-          const existing = await tx.project.findFirst({ where: { name: project.name } })
-          if (!existing) {
-            await tx.project.create({
-              data: {
-                name: project.name,
-                department: project.department,
-                presenter: project.presenter,
-                description: project.description,
-              },
-            })
-            results.projectsCreated++
-          }
+          await tx.project.create({
+            data: {
+              name: project.name,
+              department: project.department,
+              presenter: project.presenter,
+              description: project.description || '',
+            },
+          })
+          results.projectsCreated++
         }
       }
     })
 
     return NextResponse.json({
       success: true,
-      message: 'Data uploaded successfully',
+      message: '数据上传成功',
       details: results
     })
   } catch (error) {
