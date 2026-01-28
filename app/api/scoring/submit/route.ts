@@ -22,9 +22,9 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json()
-    const { projectId, valueScore, innovScore, feasiScore, outputScore } = body
+    const { projectId, dataScore, infoScore, knowScore, insightScore, approvalScore, awardScore } = body
 
-    // Validate input - 4 dimension scores (1-10)
+    // Validate input
     if (!projectId) {
       return NextResponse.json(
         { error: 'Project ID is required' },
@@ -32,11 +32,22 @@ export async function POST(request: Request) {
       )
     }
 
-    const scores = { valueScore, innovScore, feasiScore, outputScore }
+    // DIKI范式6维度验证
+    const scores = { dataScore, infoScore, knowScore, insightScore, approvalScore, awardScore }
+    const maxScores: Record<string, number> = {
+      dataScore: 20,
+      infoScore: 15,
+      knowScore: 15,
+      insightScore: 20,
+      approvalScore: 15,
+      awardScore: 15
+    }
+
     for (const [key, val] of Object.entries(scores)) {
-      if (typeof val !== 'number' || val < 1 || val > 10) {
+      const max = maxScores[key]
+      if (typeof val !== 'number' || val < 1 || val > max) {
         return NextResponse.json(
-          { error: `${key} must be a number between 1 and 10` },
+          { error: `${key} must be a number between 1 and ${max}` },
           { status: 400 }
         )
       }
@@ -59,7 +70,7 @@ export async function POST(request: Request) {
       )
     }
 
-    // Upsert score with 4 dimensions
+    // Upsert score with DIKI 6 dimensions
     const score = await prisma.score.upsert({
       where: {
         userId_projectId: {
@@ -68,18 +79,22 @@ export async function POST(request: Request) {
         }
       },
       update: {
-        valueScore,
-        innovScore,
-        feasiScore,
-        outputScore
+        dataScore,
+        infoScore,
+        knowScore,
+        insightScore,
+        approvalScore,
+        awardScore
       },
       create: {
         userId: user.id,
         projectId: projectId,
-        valueScore,
-        innovScore,
-        feasiScore,
-        outputScore
+        dataScore,
+        infoScore,
+        knowScore,
+        insightScore,
+        approvalScore,
+        awardScore
       }
     })
 

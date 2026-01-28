@@ -33,17 +33,19 @@ model Project {
 }
 
 model Score {
-  id          String   @id @default(uuid())
-  // 4维度评分 (1-10分)
-  valueScore  Int      // 研究价值 (30%)
-  innovScore  Int      // 创新性 (25%)
-  feasiScore  Int      // 可行性 (25%)
-  outputScore Int      // 预期成果 (20%)
-  user        User     @relation(fields: [userId], references: [id])
-  userId      String
-  project     Project  @relation(fields: [projectId], references: [id])
-  projectId   String
-  createdAt   DateTime @default(now())
+  id            String   @id @default(uuid())
+  // DIKI范式 - 6维度评分
+  dataScore     Int      // Data（数据质量）- 数据结构与获取难度 (20%)
+  infoScore     Int      // Information（信息处理）- 结果支撑力与可视化 (15%)
+  knowScore     Int      // Knowledge（知识构建）- 多维分析与理论价值 (15%)
+  insightScore  Int      // Insight（洞察智慧）- 问题发现与对策创新 (20%)
+  approvalScore Int      // Approval（决策影响力）- 领导批示与成果转化 (15%)
+  awardScore    Int      // Award（所获荣誉）- 奖项 (15%)
+  user          User     @relation(fields: [userId], references: [id])
+  userId        String
+  project       Project  @relation(fields: [projectId], references: [id])
+  projectId     String
+  createdAt     DateTime @default(now())
 
   @@unique([userId, projectId])
 }

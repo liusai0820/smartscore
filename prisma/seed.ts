@@ -33,7 +33,7 @@ async function main() {
     { id: "16", name: "改革创新研究所", role: "DEPT_HEAD", department: "改革创新研究所", passcode: "1234" },
     { id: "17", name: "服务业与社会民生研究所", role: "DEPT_HEAD", department: "服务业与社会民生研究所", passcode: "1234" },
     { id: "18", name: "区域发展研究所", role: "DEPT_HEAD", department: "区域发展研究所", passcode: "1234" },
-    { id: "19", name: "战略发展与项目部", role: "DEPT_HEAD", department: "战略发展与项目部", passcode: "1234" }
+    { id: "19", name: "战略发展与项目管理部", role: "DEPT_HEAD", department: "战略发展与项目管理部", passcode: "1234" }
   ]
 
   // 3. Create Projects (待评项目)

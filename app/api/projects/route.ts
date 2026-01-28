@@ -2,22 +2,33 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
 
-// 4维度评分权重
+// DIKI范式6维度评分权重
 const DIMENSION_WEIGHTS = {
-  valueScore: 0.30,
-  innovScore: 0.25,
-  feasiScore: 0.25,
-  outputScore: 0.20
+  dataScore: 0.20,     // Data（数据质量）20%
+  infoScore: 0.15,     // Information（信息处理）15%
+  knowScore: 0.15,     // Knowledge（知识构建）15%
+  insightScore: 0.20,  // Insight（洞察智慧）20%
+  approvalScore: 0.15, // Approval（决策影响力）15%
+  awardScore: 0.15     // Award（所获荣誉）15%
 }
 
 // 计算单个评分的加权总分
-function calculateWeightedScore(score: { valueScore: number; innovScore: number; feasiScore: number; outputScore: number }) {
+function calculateWeightedScore(score: {
+  dataScore: number
+  infoScore: number
+  knowScore: number
+  insightScore: number
+  approvalScore: number
+  awardScore: number
+}) {
   return (
-    score.valueScore * DIMENSION_WEIGHTS.valueScore +
-    score.innovScore * DIMENSION_WEIGHTS.innovScore +
-    score.feasiScore * DIMENSION_WEIGHTS.feasiScore +
-    score.outputScore * DIMENSION_WEIGHTS.outputScore
-  ) * 10
+    score.dataScore * DIMENSION_WEIGHTS.dataScore +
+    score.infoScore * DIMENSION_WEIGHTS.infoScore +
+    score.knowScore * DIMENSION_WEIGHTS.knowScore +
+    score.insightScore * DIMENSION_WEIGHTS.insightScore +
+    score.approvalScore * DIMENSION_WEIGHTS.approvalScore +
+    score.awardScore * DIMENSION_WEIGHTS.awardScore
+  )
 }
 
 export async function GET() {

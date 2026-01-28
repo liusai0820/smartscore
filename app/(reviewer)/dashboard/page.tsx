@@ -36,10 +36,12 @@ export default async function DashboardPage() {
     where: { userId: user.id },
     select: {
       projectId: true,
-      valueScore: true,
-      innovScore: true,
-      feasiScore: true,
-      outputScore: true
+      dataScore: true,
+      infoScore: true,
+      knowScore: true,
+      insightScore: true,
+      approvalScore: true,
+      awardScore: true
     }
   })
 
@@ -96,8 +98,8 @@ export default async function DashboardPage() {
 
         {/* 状态栏 */}
         <div className={`px-4 py-2.5 text-center text-sm font-medium flex items-center justify-center gap-2 ${isScoringOpen
-            ? 'bg-gradient-to-r from-[#7ec699]/10 via-[#7ec699]/20 to-[#7ec699]/10 text-[#7ec699] border-t border-[#7ec699]/20'
-            : 'bg-gradient-to-r from-[#c53d43]/10 via-[#c53d43]/20 to-[#c53d43]/10 text-[#e85a5a] border-t border-[#c53d43]/20'
+          ? 'bg-gradient-to-r from-[#7ec699]/10 via-[#7ec699]/20 to-[#7ec699]/10 text-[#7ec699] border-t border-[#7ec699]/20'
+          : 'bg-gradient-to-r from-[#c53d43]/10 via-[#c53d43]/20 to-[#c53d43]/10 text-[#e85a5a] border-t border-[#c53d43]/20'
           }`}>
           <span className={`w-2 h-2 rounded-full ${isScoringOpen ? 'bg-[#7ec699] animate-pulse' : 'bg-[#e85a5a]'}`} />
           {isScoringOpen ? '评分进行中' : '评分已关闭'}
