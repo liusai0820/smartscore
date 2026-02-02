@@ -49,6 +49,7 @@ export default function LiveRanking() {
   const [data, setData] = useState<ApiResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [viewMode, setViewMode] = useState<'OVERALL' | 'DIMENSIONS' | 'CONSISTENCY'>('OVERALL')
+  const [showRulesModal, setShowRulesModal] = useState(false)
 
   const fetchData = async () => {
     try {
@@ -116,6 +117,16 @@ export default function LiveRanking() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
+          {/* 评分规则按钮 */}
+          <button
+            onClick={() => setShowRulesModal(true)}
+            className="w-10 h-10 rounded-xl bg-[var(--color-ink-light)] border border-[var(--color-ink-soft)] flex items-center justify-center text-[var(--color-text-muted)] hover:text-[#d4a853] hover:border-[#d4a853]/50 transition-all duration-300 hover:scale-110"
+            title="评分规则说明"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </button>
         </div>
 
         <h1 className="text-5xl md:text-6xl font-black tracking-tight mb-4" style={{ fontFamily: 'var(--font-noto-serif)' }}>
@@ -477,6 +488,250 @@ export default function LiveRanking() {
           <div className="w-12 h-px bg-gradient-to-r from-transparent via-[var(--color-ink-soft)] to-transparent" />
         </div>
       </footer>
+
+      {/* 评分规则说明模态框 */}
+      {showRulesModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* 背景遮罩 */}
+          <div
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            onClick={() => setShowRulesModal(false)}
+          />
+
+          {/* 模态框内容 */}
+          <div className="relative bg-[var(--color-ink-light)] border border-[var(--color-ink-soft)] rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto shadow-2xl animate-fade-in-up">
+            {/* 头部 */}
+            <div className="sticky top-0 bg-[var(--color-ink-light)] border-b border-[var(--color-ink-soft)] px-6 py-4 flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-[var(--color-text-primary)]" style={{ fontFamily: 'var(--font-noto-serif)' }}>
+                评分规则说明
+              </h2>
+              <button
+                onClick={() => setShowRulesModal(false)}
+                className="w-10 h-10 rounded-xl bg-[var(--color-ink-medium)] flex items-center justify-center text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-ink-soft)] transition-all"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* 内容区 */}
+            <div className="p-6 space-y-8">
+              {/* DIKI范式评分维度 */}
+              <section>
+                <h3 className="text-lg font-bold text-[#d4a853] mb-4 flex items-center gap-2">
+                  <span className="w-8 h-8 rounded-lg bg-[#d4a853]/20 flex items-center justify-center text-sm">1</span>
+                  DIKI范式评分维度
+                </h3>
+                <div className="bg-[var(--color-ink-medium)] rounded-xl p-4 overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="text-[var(--color-text-muted)] border-b border-[var(--color-ink-soft)]">
+                        <th className="text-left py-2 px-3">维度</th>
+                        <th className="text-center py-2 px-3">权重</th>
+                        <th className="text-center py-2 px-3">满分</th>
+                        <th className="text-left py-2 px-3">说明</th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-[var(--color-text-primary)]">
+                      <tr className="border-b border-[var(--color-ink-soft)]/50">
+                        <td className="py-2 px-3 font-medium">Data（数据质量）</td>
+                        <td className="text-center py-2 px-3 text-[#7ec699]">20%</td>
+                        <td className="text-center py-2 px-3">20分</td>
+                        <td className="py-2 px-3 text-[var(--color-text-muted)]">核心一手数据占比、时效性、稀缺性</td>
+                      </tr>
+                      <tr className="border-b border-[var(--color-ink-soft)]/50">
+                        <td className="py-2 px-3 font-medium">Information（信息处理）</td>
+                        <td className="text-center py-2 px-3 text-[#7ec699]">15%</td>
+                        <td className="text-center py-2 px-3">15分</td>
+                        <td className="py-2 px-3 text-[var(--color-text-muted)]">数据清晰度、逻辑严密性、可视化程度</td>
+                      </tr>
+                      <tr className="border-b border-[var(--color-ink-soft)]/50">
+                        <td className="py-2 px-3 font-medium">Knowledge（知识构建）</td>
+                        <td className="text-center py-2 px-3 text-[#7ec699]">15%</td>
+                        <td className="text-center py-2 px-3">15分</td>
+                        <td className="py-2 px-3 text-[var(--color-text-muted)]">跨领域分析、理论模型构建、理论价值</td>
+                      </tr>
+                      <tr className="border-b border-[var(--color-ink-soft)]/50">
+                        <td className="py-2 px-3 font-medium">Insight（洞察智慧）</td>
+                        <td className="text-center py-2 px-3 text-[#7ec699]">20%</td>
+                        <td className="text-center py-2 px-3">20分</td>
+                        <td className="py-2 px-3 text-[var(--color-text-muted)]">问题发现能力、对策原创性</td>
+                      </tr>
+                      <tr className="border-b border-[var(--color-ink-soft)]/50">
+                        <td className="py-2 px-3 font-medium">Approval（决策影响力）</td>
+                        <td className="text-center py-2 px-3 text-[#5fb3b3]">15%</td>
+                        <td className="text-center py-2 px-3">15分</td>
+                        <td className="py-2 px-3 text-[var(--color-text-muted)]">领导批示、政策转化层级</td>
+                      </tr>
+                      <tr>
+                        <td className="py-2 px-3 font-medium">Award（所获荣誉）</td>
+                        <td className="text-center py-2 px-3 text-[#5fb3b3]">15%</td>
+                        <td className="text-center py-2 px-3">15分</td>
+                        <td className="py-2 px-3 text-[var(--color-text-muted)]">国家/省/市级奖项</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+
+              {/* 评委权重 */}
+              <section>
+                <h3 className="text-lg font-bold text-[#d4a853] mb-4 flex items-center gap-2">
+                  <span className="w-8 h-8 rounded-lg bg-[#d4a853]/20 flex items-center justify-center text-sm">2</span>
+                  评委权重
+                </h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-[var(--color-ink-medium)] rounded-xl p-4 border-l-4 border-[#c53d43]">
+                    <div className="text-[#c53d43] font-bold text-lg mb-1">中心领导/总工</div>
+                    <div className="text-4xl font-black text-[var(--color-text-primary)]">60%</div>
+                    <div className="text-sm text-[var(--color-text-muted)] mt-2">主任、副主任、总工/副总工</div>
+                  </div>
+                  <div className="bg-[var(--color-ink-medium)] rounded-xl p-4 border-l-4 border-[#d4a853]">
+                    <div className="text-[#d4a853] font-bold text-lg mb-1">各所/部负责人</div>
+                    <div className="text-4xl font-black text-[var(--color-text-primary)]">40%</div>
+                    <div className="text-sm text-[var(--color-text-muted)] mt-2">各研究所、各部门负责人</div>
+                  </div>
+                </div>
+              </section>
+
+              {/* 计算公式 */}
+              <section>
+                <h3 className="text-lg font-bold text-[#d4a853] mb-4 flex items-center gap-2">
+                  <span className="w-8 h-8 rounded-lg bg-[#d4a853]/20 flex items-center justify-center text-sm">3</span>
+                  计算公式
+                </h3>
+                <div className="bg-[var(--color-ink-medium)] rounded-xl p-5">
+                  <div className="text-center mb-4">
+                    <div className="inline-block bg-[var(--color-ink)] px-6 py-3 rounded-lg border border-[var(--color-ink-soft)]">
+                      <span className="text-[var(--color-text-primary)] font-mono text-lg">
+                        最终得分 = <span className="text-[#c53d43]">领导平均分 × 60%</span> + <span className="text-[#d4a853]">部门平均分 × 40%</span>
+                      </span>
+                    </div>
+                  </div>
+                  <div className="text-sm text-[var(--color-text-muted)] text-center">
+                    * 每位评委的打分先按DIKI六维度加权计算百分制得分，再按评委类型加权汇总
+                  </div>
+                </div>
+              </section>
+
+              {/* 计算案例 */}
+              <section>
+                <h3 className="text-lg font-bold text-[#d4a853] mb-4 flex items-center gap-2">
+                  <span className="w-8 h-8 rounded-lg bg-[#d4a853]/20 flex items-center justify-center text-sm">4</span>
+                  计算案例
+                </h3>
+                <div className="bg-[var(--color-ink-medium)] rounded-xl p-5 space-y-5">
+                  <div className="text-[var(--color-text-primary)] font-medium">
+                    假设某项目收到 <span className="text-[#c53d43]">3位领导</span> 和 <span className="text-[#d4a853]">2位部门负责人</span> 的评分：
+                  </div>
+
+                  {/* 两列布局：领导 + 部门 */}
+                  <div className="grid grid-cols-2 gap-4">
+                    {/* 领导评分 */}
+                    <div className="space-y-2">
+                      <div className="text-sm text-[#c53d43] font-bold mb-3 flex items-center gap-2">
+                        <span className="w-6 h-6 rounded bg-[#c53d43]/20 flex items-center justify-center text-xs">60%</span>
+                        中心领导/总工评分
+                      </div>
+                      <div className="bg-[var(--color-ink)] rounded-lg p-3 border-l-4 border-[#c53d43]">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-[var(--color-text-muted)]">主任1</span>
+                          <span className="text-[#7ec699] font-bold">85.0分</span>
+                        </div>
+                      </div>
+                      <div className="bg-[var(--color-ink)] rounded-lg p-3 border-l-4 border-[#c53d43]">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-[var(--color-text-muted)]">主任2</span>
+                          <span className="text-[#7ec699] font-bold">82.0分</span>
+                        </div>
+                      </div>
+                      <div className="bg-[var(--color-ink)] rounded-lg p-3 border-l-4 border-[#c53d43]">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-[var(--color-text-muted)]">总工1</span>
+                          <span className="text-[#7ec699] font-bold">80.0分</span>
+                        </div>
+                      </div>
+                      <div className="bg-[#c53d43]/10 rounded-lg p-3 border border-[#c53d43]/30 mt-3">
+                        <div className="text-xs text-[var(--color-text-muted)] mb-1">领导平均分</div>
+                        <div className="text-sm text-[var(--color-text-primary)]">
+                          (85 + 82 + 80) ÷ 3 = <span className="text-[#c53d43] font-bold text-lg">82.3分</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 部门评分 */}
+                    <div className="space-y-2">
+                      <div className="text-sm text-[#d4a853] font-bold mb-3 flex items-center gap-2">
+                        <span className="w-6 h-6 rounded bg-[#d4a853]/20 flex items-center justify-center text-xs">40%</span>
+                        各所/部负责人评分
+                      </div>
+                      <div className="bg-[var(--color-ink)] rounded-lg p-3 border-l-4 border-[#d4a853]">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-[var(--color-text-muted)]">数字经济研究所</span>
+                          <span className="text-[#7ec699] font-bold">78.0分</span>
+                        </div>
+                      </div>
+                      <div className="bg-[var(--color-ink)] rounded-lg p-3 border-l-4 border-[#d4a853]">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-[var(--color-text-muted)]">生物经济研究所</span>
+                          <span className="text-[#7ec699] font-bold">76.0分</span>
+                        </div>
+                      </div>
+                      <div className="bg-[#d4a853]/10 rounded-lg p-3 border border-[#d4a853]/30 mt-3" style={{ marginTop: '4.5rem' }}>
+                        <div className="text-xs text-[var(--color-text-muted)] mb-1">部门平均分</div>
+                        <div className="text-sm text-[var(--color-text-primary)]">
+                          (78 + 76) ÷ 2 = <span className="text-[#d4a853] font-bold text-lg">77.0分</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 最终计算 */}
+                  <div className="bg-gradient-to-r from-[#c53d43]/10 via-[#d4a853]/10 to-[#7ec699]/10 rounded-xl p-5 border border-[#d4a853]/30">
+                    <div className="text-center">
+                      <div className="text-sm text-[var(--color-text-muted)] mb-3">最终得分 = 领导平均分 × 60% + 部门平均分 × 40%</div>
+                      <div className="text-xl text-[var(--color-text-primary)] flex items-center justify-center gap-3 flex-wrap">
+                        <span><span className="text-[#c53d43] font-bold">82.3</span> × 60%</span>
+                        <span className="text-[var(--color-text-muted)]">+</span>
+                        <span><span className="text-[#d4a853] font-bold">77.0</span> × 40%</span>
+                        <span className="text-[var(--color-text-muted)]">=</span>
+                        <span className="text-[#7ec699] font-black text-3xl">80.2分</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 补充说明 */}
+                  <div className="text-xs text-[var(--color-text-muted)] flex items-start gap-2">
+                    <svg className="w-4 h-4 text-[#5fb3b3] flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>每位评委的分数是其DIKI六维度打分的加权结果（百分制），再按评委类型分组求平均，最后按60%/40%权重汇总。</span>
+                  </div>
+                </div>
+              </section>
+
+              {/* 回避规则 */}
+              <section>
+                <h3 className="text-lg font-bold text-[#d4a853] mb-4 flex items-center gap-2">
+                  <span className="w-8 h-8 rounded-lg bg-[#d4a853]/20 flex items-center justify-center text-sm">5</span>
+                  回避规则
+                </h3>
+                <div className="bg-[var(--color-ink-medium)] rounded-xl p-4 flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-[#e85a5a]/20 flex items-center justify-center flex-shrink-0">
+                    <svg className="w-4 h-4 text-[#e85a5a]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                  </div>
+                  <div className="text-[var(--color-text-muted)]">
+                    评委<span className="text-[var(--color-text-primary)] font-medium">不能</span>为自己所属部门的项目打分，系统会自动识别并禁止评分。
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
