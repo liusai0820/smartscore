@@ -15,11 +15,11 @@ async function main() {
 
   // 2. Create Users (评委) - 只初始化评审员，不包含项目
   const users = [
-    { id: "01", name: "主任1", role: "LEADER", department: "中心领导", passcode: "1234" },
-    { id: "02", name: "主任2", role: "LEADER", department: "中心领导", passcode: "1234" },
-    { id: "03", name: "主任3", role: "LEADER", department: "中心领导", passcode: "1234" },
-    { id: "04", name: "总工1", role: "LEADER", department: "总工/副总工工程师", passcode: "1234" },
-    { id: "05", name: "总工2", role: "LEADER", department: "总工/副总工工程师", passcode: "1234" },
+    { id: "01", name: "康主任", role: "LEADER", department: "中心领导", passcode: "1234" },
+    { id: "02", name: "陈主任", role: "LEADER", department: "中心领导", passcode: "1234" },
+    { id: "03", name: "李主任", role: "LEADER", department: "中心领导", passcode: "1234" },
+    { id: "04", name: "宗总工", role: "LEADER", department: "总工", passcode: "1234" },
+    { id: "05", name: "陈总工", role: "LEADER", department: "总工", passcode: "1234" },
     { id: "06", name: "数字经济研究所", role: "DEPT_HEAD", department: "数字经济研究所", passcode: "1234" },
     { id: "07", name: "生物经济研究所", role: "DEPT_HEAD", department: "生物经济研究所", passcode: "1234" },
     { id: "08", name: "能源经济研究所", role: "DEPT_HEAD", department: "能源经济研究所", passcode: "1234" },
