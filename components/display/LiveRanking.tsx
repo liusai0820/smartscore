@@ -137,18 +137,18 @@ export default function LiveRanking() {
         <div className={clsx(
           "inline-flex items-center gap-3 px-6 py-3 rounded-full text-lg font-bold",
           state === 'SCORING' ? "bg-[#7ec699]/15 text-[#7ec699] border border-[#7ec699]/30" :
-          state === 'REVEALED' ? "bg-[#d4a853]/15 text-[#d4a853] border border-[#d4a853]/30" :
-          "bg-[var(--color-ink-soft)] text-[var(--color-text-muted)] border border-[var(--color-ink-soft)]"
+            state === 'REVEALED' ? "bg-[#d4a853]/15 text-[#d4a853] border border-[#d4a853]/30" :
+              "bg-[var(--color-ink-soft)] text-[var(--color-text-muted)] border border-[var(--color-ink-soft)]"
         )}>
           <span className={clsx(
             "w-3 h-3 rounded-full",
             state === 'SCORING' ? "bg-[#7ec699] animate-pulse" :
-            state === 'REVEALED' ? "bg-[#d4a853]" :
-            "bg-[var(--color-text-muted)]"
+              state === 'REVEALED' ? "bg-[#d4a853]" :
+                "bg-[var(--color-text-muted)]"
           )} />
           {state === 'SCORING' ? '评分进行中' :
-           state === 'REVEALED' ? '最终排名' :
-           '等待开始'}
+            state === 'REVEALED' ? '最终排名' :
+              '等待开始'}
         </div>
       </header>
 
@@ -306,9 +306,9 @@ export default function LiveRanking() {
                     <div className={clsx(
                       "flex-shrink-0 w-20 h-20 rounded-2xl flex flex-col items-center justify-center text-center z-10 transition-transform hover:scale-110",
                       index === 0 ? "medal-gold" :
-                      index === 1 ? "medal-silver" :
-                      index === 2 ? "medal-bronze" :
-                      "bg-[var(--color-ink-medium)] border border-[var(--color-ink-soft)]"
+                        index === 1 ? "medal-silver" :
+                          index === 2 ? "medal-bronze" :
+                            "bg-[var(--color-ink-medium)] border border-[var(--color-ink-soft)]"
                     )}>
                       {index < 3 ? (
                         <>
@@ -348,9 +348,9 @@ export default function LiveRanking() {
                       <div className={clsx(
                         "text-5xl font-black",
                         index === 0 ? "text-[#ffd700]" :
-                        index === 1 ? "text-[#c0c0c0]" :
-                        index === 2 ? "text-[#cd7f32]" :
-                        "text-[#d4a853]"
+                          index === 1 ? "text-[#c0c0c0]" :
+                            index === 2 ? "text-[#cd7f32]" :
+                              "text-[#d4a853]"
                       )}>
                         {project.finalScore?.toFixed(1) || '-'}
                       </div>
@@ -364,10 +364,10 @@ export default function LiveRanking() {
                         background: index === 0
                           ? 'linear-gradient(90deg, rgba(255,215,0,0.1) 0%, rgba(255,215,0,0.05) 100%)'
                           : index === 1
-                          ? 'linear-gradient(90deg, rgba(192,192,192,0.1) 0%, rgba(192,192,192,0.05) 100%)'
-                          : index === 2
-                          ? 'linear-gradient(90deg, rgba(205,127,50,0.1) 0%, rgba(205,127,50,0.05) 100%)'
-                          : 'linear-gradient(90deg, rgba(212,168,83,0.1) 0%, rgba(212,168,83,0.05) 100%)'
+                            ? 'linear-gradient(90deg, rgba(192,192,192,0.1) 0%, rgba(192,192,192,0.05) 100%)'
+                            : index === 2
+                              ? 'linear-gradient(90deg, rgba(205,127,50,0.1) 0%, rgba(205,127,50,0.05) 100%)'
+                              : 'linear-gradient(90deg, rgba(212,168,83,0.1) 0%, rgba(212,168,83,0.05) 100%)'
                       }}
                     />
                   </div>
@@ -401,8 +401,8 @@ export default function LiveRanking() {
                             <div className={clsx(
                               "w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm",
                               i === 0 ? "bg-[#ffd700] text-black" :
-                              i === 1 ? "bg-[#c0c0c0] text-black" :
-                              "bg-[#cd7f32] text-black"
+                                i === 1 ? "bg-[#c0c0c0] text-black" :
+                                  "bg-[#cd7f32] text-black"
                             )}>
                               {i + 1}
                             </div>
@@ -434,46 +434,46 @@ export default function LiveRanking() {
                 {[...results]
                   .sort((a, b) => ((a.standardDeviation || 0) - (b.standardDeviation || 0))) // 升序排列，越小越一致
                   .map((project, index) => (
-                  <div
-                    key={project.id}
-                    className="relative float-card p-6 flex items-center gap-6 overflow-hidden animate-fade-in-up"
-                    style={{ animationDelay: `${index * 0.15}s` }}
-                  >
-                    <div className="w-16 h-16 rounded-2xl bg-[var(--color-ink-medium)] border border-[var(--color-ink-soft)] flex flex-col items-center justify-center text-[var(--color-text-muted)]">
-                      <span className="text-xs">共识</span>
-                      <span className="text-xl font-bold text-[var(--color-text-primary)]">{index + 1}</span>
-                    </div>
-
-                    <div className="flex-grow z-10">
-                      <h3 className="text-2xl font-bold text-[var(--color-text-primary)] mb-1" style={{ fontFamily: 'var(--font-noto-serif)' }}>
-                        {project.name}
-                      </h3>
-                      <p className="text-[var(--color-text-muted)] flex items-center gap-2">
-                        <span>{project.presenter}</span>
-                        <span className="text-[var(--color-ink-soft)]">·</span>
-                        <span>{project.department}</span>
-                      </p>
-                    </div>
-
-                    <div className="text-right z-10 min-w-[140px]">
-                      <div className="text-xs text-[var(--color-text-muted)] uppercase tracking-widest mb-1">争议指数</div>
-                      <div className={clsx(
-                        "text-4xl font-black",
-                        index < 3 ? "text-[#7ec699]" : "text-[var(--color-text-muted)]"
-                      )}>
-                        {project.standardDeviation?.toFixed(2) || '-'}
+                    <div
+                      key={project.id}
+                      className="relative float-card p-6 flex items-center gap-6 overflow-hidden animate-fade-in-up"
+                      style={{ animationDelay: `${index * 0.15}s` }}
+                    >
+                      <div className="w-16 h-16 rounded-2xl bg-[var(--color-ink-medium)] border border-[var(--color-ink-soft)] flex flex-col items-center justify-center text-[var(--color-text-muted)]">
+                        <span className="text-xs">共识</span>
+                        <span className="text-xl font-bold text-[var(--color-text-primary)]">{index + 1}</span>
                       </div>
-                    </div>
 
-                    {/* 背景条 - 争议指数越低（一致性高），背景越亮 */}
-                     <div
-                      className="absolute left-0 top-0 bottom-0 transition-all duration-1000 z-0 bg-[#7ec699]/5"
-                      style={{
-                        width: `${Math.max(0, 100 - (project.standardDeviation || 0) * 5)}%`, // 简单的可视化映射
-                      }}
-                    />
-                  </div>
-                ))}
+                      <div className="flex-grow z-10">
+                        <h3 className="text-2xl font-bold text-[var(--color-text-primary)] mb-1" style={{ fontFamily: 'var(--font-noto-serif)' }}>
+                          {project.name}
+                        </h3>
+                        <p className="text-[var(--color-text-muted)] flex items-center gap-2">
+                          <span>{project.presenter}</span>
+                          <span className="text-[var(--color-ink-soft)]">·</span>
+                          <span>{project.department}</span>
+                        </p>
+                      </div>
+
+                      <div className="text-right z-10 min-w-[140px]">
+                        <div className="text-xs text-[var(--color-text-muted)] uppercase tracking-widest mb-1">争议指数</div>
+                        <div className={clsx(
+                          "text-4xl font-black",
+                          index < 3 ? "text-[#7ec699]" : "text-[var(--color-text-muted)]"
+                        )}>
+                          {project.standardDeviation?.toFixed(2) || '-'}
+                        </div>
+                      </div>
+
+                      {/* 背景条 - 争议指数越低（一致性高），背景越亮 */}
+                      <div
+                        className="absolute left-0 top-0 bottom-0 transition-all duration-1000 z-0 bg-[#7ec699]/5"
+                        style={{
+                          width: `${Math.max(0, 100 - (project.standardDeviation || 0) * 5)}%`, // 简单的可视化映射
+                        }}
+                      />
+                    </div>
+                  ))}
               </div>
             )}
           </div>
@@ -568,7 +568,7 @@ export default function LiveRanking() {
                         <td className="py-2 px-3 font-medium">Award（所获荣誉）</td>
                         <td className="text-center py-2 px-3 text-[#5fb3b3]">15%</td>
                         <td className="text-center py-2 px-3">15分</td>
-                        <td className="py-2 px-3 text-[var(--color-text-muted)]">国家/省/市级奖项</td>
+                        <td className="py-2 px-3 text-[var(--color-text-muted)]">省/市级奖项</td>
                       </tr>
                     </tbody>
                   </table>
@@ -725,6 +725,52 @@ export default function LiveRanking() {
                   </div>
                   <div className="text-[var(--color-text-muted)]">
                     评委<span className="text-[var(--color-text-primary)] font-medium">不能</span>为自己所属部门的项目打分，系统会自动识别并禁止评分。
+                  </div>
+                </div>
+              </section>
+
+              {/* 缺席处理 */}
+              <section>
+                <h3 className="text-lg font-bold text-[#d4a853] mb-4 flex items-center gap-2">
+                  <span className="w-8 h-8 rounded-lg bg-[#d4a853]/20 flex items-center justify-center text-sm">6</span>
+                  评委缺席处理
+                </h3>
+                <div className="bg-[var(--color-ink-medium)] rounded-xl p-4 space-y-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-[#7ec699]/20 flex items-center justify-center flex-shrink-0">
+                      <svg className="w-4 h-4 text-[#7ec699]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <div className="text-[var(--color-text-muted)]">
+                      <span className="text-[var(--color-text-primary)] font-medium">个别评委临时离席不影响公平性。</span>
+                      系统采用<span className="text-[#7ec699] font-medium">平均分机制</span>：无论几人打分，均按实际人数求平均后再按60%/40%权重汇总。
+                    </div>
+                  </div>
+                  <div className="bg-[var(--color-ink)] rounded-lg p-3 text-sm">
+                    <div className="text-[var(--color-text-muted)] mb-2">示例：</div>
+                    <div className="grid grid-cols-2 gap-4 text-[var(--color-text-primary)]">
+                      <div>
+                        <span className="text-[#c53d43]">5位领导全勤</span>：(L1+L2+L3+L4+L5) ÷ 5 × 60%
+                      </div>
+                      <div>
+                        <span className="text-[#c53d43]">1位领导缺席</span>：(L1+L2+L3+L4) ÷ 4 × 60%
+                      </div>
+                    </div>
+                    <div className="text-xs text-[var(--color-text-muted)] mt-2">
+                      权重恒定，只是参与平均的人数变化，对所有项目一视同仁。
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 pt-2 border-t border-[var(--color-ink-soft)]">
+                    <div className="w-8 h-8 rounded-lg bg-[#5fb3b3]/20 flex items-center justify-center flex-shrink-0">
+                      <svg className="w-4 h-4 text-[#5fb3b3]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                    </div>
+                    <div className="text-[var(--color-text-muted)]">
+                      管理员可在后台将离席评委<span className="text-[#5fb3b3] font-medium">临时禁用</span>，该评委将不计入总人数统计，回来后可随时启用。
+                    </div>
                   </div>
                 </div>
               </section>
