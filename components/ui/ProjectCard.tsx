@@ -156,10 +156,11 @@ export default function ProjectCard({ project, currentUser, existingScore, isSco
 
   const hasConflict = project.department === currentUser.department
 
-  // 计算加权总分
+  // 计算加权总分（百分制）
   const calculateTotal = (s: Record<DimensionKey, number>) => {
     return DIMENSIONS.reduce((sum, dim) => {
-      return sum + (s[dim.key] * dim.weight / 100)
+      const maxScore = dim.key === 'dataScore' || dim.key === 'insightScore' ? 20 : 15
+      return sum + (s[dim.key] / maxScore) * dim.weight
     }, 0)
   }
 

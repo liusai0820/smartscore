@@ -162,6 +162,7 @@ export default async function DashboardPage() {
           ) : (
             <div className="animate-fade-in-up">
               <ProjectCard
+                key={currentProject.id}
                 project={currentProject}
                 currentUser={user}
                 existingScore={existingScore}
