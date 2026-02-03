@@ -1,18 +1,15 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 
-// DIKI范式6维度评分权重
-const DIMENSION_WEIGHTS = {
-  dataScore: 0.20,     // Data（数据质量）20%
-  infoScore: 0.15,     // Information（信息处理）15%
-  knowScore: 0.15,     // Knowledge（知识构建）15%
-  insightScore: 0.20,  // Insight（洞察智慧）20%
-  approvalScore: 0.15, // Approval（决策影响力）15%
-  awardScore: 0.15     // Award（所获荣誉）15%
-}
-
-// 计算单个评分的加权总分
-function calculateWeightedScore(score: {
+// 计算单个评分的总分（直接求和，因为各维度满分已体现权重比例）
+// dataScore: 最高20分 (20%)
+// infoScore: 最高15分 (15%)
+// knowScore: 最高15分 (15%)
+// insightScore: 最高20分 (20%)
+// approvalScore: 最高15分 (15%)
+// awardScore: 最高15分 (15%)
+// 总计满分100分
+function calculateTotalScore(score: {
   dataScore: number
   infoScore: number
   knowScore: number
@@ -21,12 +18,12 @@ function calculateWeightedScore(score: {
   awardScore: number
 }) {
   return (
-    score.dataScore * DIMENSION_WEIGHTS.dataScore +
-    score.infoScore * DIMENSION_WEIGHTS.infoScore +
-    score.knowScore * DIMENSION_WEIGHTS.knowScore +
-    score.insightScore * DIMENSION_WEIGHTS.insightScore +
-    score.approvalScore * DIMENSION_WEIGHTS.approvalScore +
-    score.awardScore * DIMENSION_WEIGHTS.awardScore
+    score.dataScore +
+    score.infoScore +
+    score.knowScore +
+    score.insightScore +
+    score.approvalScore +
+    score.awardScore
   )
 }
 
@@ -104,7 +101,7 @@ export async function GET() {
       // Calculate Standard Deviation
       let standardDeviation = 0
       if (allScores.length > 0) {
-        const weightedTotals = allScores.map(s => calculateWeightedScore(s))
+        const weightedTotals = allScores.map(s => calculateTotalScore(s))
         const mean = weightedTotals.reduce((a, b) => a + b, 0) / weightedTotals.length
         const variance = weightedTotals.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / weightedTotals.length
         standardDeviation = Math.sqrt(variance)
@@ -113,7 +110,7 @@ export async function GET() {
       // Calculate weighted average for each group
       const avgWeightedScore = (scores: typeof leaderScores) => {
         if (scores.length === 0) return 0
-        const total = scores.reduce((sum, s) => sum + calculateWeightedScore(s), 0)
+        const total = scores.reduce((sum, s) => sum + calculateTotalScore(s), 0)
         return total / scores.length
       }
 
