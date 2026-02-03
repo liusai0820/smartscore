@@ -295,83 +295,81 @@ export default function LiveRanking() {
 
             {/* 总榜单视图 */}
             {viewMode === 'OVERALL' && (
-              <div className="space-y-4">
-                {results.map((project, index) => (
-                  <div
-                    key={project.id}
-                    className="relative float-card p-6 flex items-center gap-6 overflow-hidden animate-fade-in-up"
-                    style={{ animationDelay: `${index * 0.15}s` }}
-                  >
-                    {/* 排名奖牌 */}
-                    <div className={clsx(
-                      "flex-shrink-0 w-20 h-20 rounded-2xl flex flex-col items-center justify-center text-center z-10 transition-transform hover:scale-110",
-                      index === 0 ? "medal-gold" :
-                        index === 1 ? "medal-silver" :
-                          index === 2 ? "medal-bronze" :
-                            "bg-[var(--color-ink-medium)] border border-[var(--color-ink-soft)]"
-                    )}>
-                      {index < 3 ? (
-                        <>
-                          <span className="text-xs font-medium opacity-80">
-                            {index === 0 ? '冠军' : index === 1 ? '亚军' : '季军'}
-                          </span>
+              <div className="space-y-2">
+                {results.map((project, index) => {
+                  const isTop3 = index < 3
+
+                  return (
+                    <div
+                      key={project.id}
+                      className="relative float-card p-3 flex items-center gap-4 overflow-hidden animate-fade-in-up"
+                      style={{ animationDelay: `${index * 0.08}s` }}
+                    >
+                      {/* 排名奖牌 */}
+                      <div className={clsx(
+                        "flex-shrink-0 rounded-xl flex items-center justify-center text-center z-10 transition-transform hover:scale-110",
+                        isTop3 ? "w-14 h-14" : "w-12 h-12 rounded-lg",
+                        index === 0 ? "medal-gold" :
+                          index === 1 ? "medal-silver" :
+                            index === 2 ? "medal-bronze" :
+                              "bg-[var(--color-ink-medium)] border border-[var(--color-ink-soft)]"
+                      )}>
+                        {index < 3 ? (
                           <span className="text-2xl font-black">
                             {index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}
                           </span>
-                        </>
-                      ) : (
-                        <>
-                          <span className="text-xs text-[var(--color-text-muted)]">第</span>
-                          <span className="text-2xl font-black text-[var(--color-text-secondary)]">{index + 1}</span>
-                          <span className="text-xs text-[var(--color-text-muted)]">名</span>
-                        </>
-                      )}
-                    </div>
-
-                    {/* 项目信息 */}
-                    <div className="flex-grow z-10">
-                      <h3 className="text-2xl font-bold text-[var(--color-text-primary)] mb-1" style={{ fontFamily: 'var(--font-noto-serif)' }}>
-                        {project.name}
-                      </h3>
-                      <p className="text-[var(--color-text-muted)] flex items-center gap-2">
-                        <span>{project.presenter}</span>
-                        <span className="text-[var(--color-ink-soft)]">·</span>
-                        <span>{project.department}</span>
-                        <span className="text-[var(--color-ink-soft)]">·</span>
-                        <span className="text-[#7ec699]">{project.scoreCount} 票</span>
-                      </p>
-                    </div>
-
-                    {/* 最终得分 */}
-                    <div className="text-right z-10 min-w-[140px]">
-                      <div className="text-xs text-[var(--color-text-muted)] uppercase tracking-widest mb-1">最终得分</div>
-                      <div className={clsx(
-                        "text-5xl font-black",
-                        index === 0 ? "text-[#ffd700]" :
-                          index === 1 ? "text-[#c0c0c0]" :
-                            index === 2 ? "text-[#cd7f32]" :
-                              "text-[#d4a853]"
-                      )}>
-                        {project.finalScore?.toFixed(1) || '-'}
+                        ) : (
+                          <span className="text-xl font-black text-[var(--color-text-secondary)]">
+                            {index + 1}
+                          </span>
+                        )}
                       </div>
-                    </div>
 
-                    {/* 背景进度条 */}
-                    <div
-                      className="absolute left-0 top-0 bottom-0 transition-all duration-1000 z-0"
-                      style={{
-                        width: `${project.finalScore || 0}%`,
-                        background: index === 0
-                          ? 'linear-gradient(90deg, rgba(255,215,0,0.1) 0%, rgba(255,215,0,0.05) 100%)'
-                          : index === 1
-                            ? 'linear-gradient(90deg, rgba(192,192,192,0.1) 0%, rgba(192,192,192,0.05) 100%)'
-                            : index === 2
-                              ? 'linear-gradient(90deg, rgba(205,127,50,0.1) 0%, rgba(205,127,50,0.05) 100%)'
-                              : 'linear-gradient(90deg, rgba(212,168,83,0.1) 0%, rgba(212,168,83,0.05) 100%)'
-                      }}
-                    />
-                  </div>
-                ))}
+                      {/* 项目信息 */}
+                      <div className="flex-grow z-10 min-w-0">
+                        <h3 className="text-lg font-bold text-[var(--color-text-primary)] truncate mb-0.5" style={{ fontFamily: 'var(--font-noto-serif)' }}>
+                          {project.name}
+                        </h3>
+                        <p className="text-sm text-[var(--color-text-muted)] flex items-center gap-2 truncate">
+                          <span>{project.presenter}</span>
+                          <span className="text-[var(--color-ink-soft)]">·</span>
+                          <span>{project.department}</span>
+                          <span className="text-[var(--color-ink-soft)]">·</span>
+                          <span className="text-[#7ec699]">{project.scoreCount} 票</span>
+                        </p>
+                      </div>
+
+                      {/* 最终得分 */}
+                      <div className="text-right z-10 flex-shrink-0 min-w-[80px]">
+                        <div className={clsx(
+                          "font-black",
+                          isTop3 ? "text-3xl" : "text-2xl",
+                          index === 0 ? "text-[#ffd700]" :
+                            index === 1 ? "text-[#c0c0c0]" :
+                              index === 2 ? "text-[#cd7f32]" :
+                                "text-[#d4a853]"
+                        )}>
+                          {project.finalScore?.toFixed(1) || '-'}
+                        </div>
+                      </div>
+
+                      {/* 背景进度条 */}
+                      <div
+                        className="absolute left-0 top-0 bottom-0 transition-all duration-1000 z-0"
+                        style={{
+                          width: `${project.finalScore || 0}%`,
+                          background: index === 0
+                            ? 'linear-gradient(90deg, rgba(255,215,0,0.08) 0%, rgba(255,215,0,0.03) 100%)'
+                            : index === 1
+                              ? 'linear-gradient(90deg, rgba(192,192,192,0.08) 0%, rgba(192,192,192,0.03) 100%)'
+                              : index === 2
+                                ? 'linear-gradient(90deg, rgba(205,127,50,0.08) 0%, rgba(205,127,50,0.03) 100%)'
+                                : 'linear-gradient(90deg, rgba(212,168,83,0.08) 0%, rgba(212,168,83,0.03) 100%)'
+                        }}
+                      />
+                    </div>
+                  )
+                })}
               </div>
             )}
 
@@ -379,10 +377,46 @@ export default function LiveRanking() {
             {viewMode === 'DIMENSIONS' && (
               <div className="grid grid-cols-2 gap-6 animate-fade-in-up">
                 {[
-                  { key: 'avgValueScore', title: '研究价值', icon: '💎' },
-                  { key: 'avgInnovScore', title: '创新性', icon: '💡' },
-                  { key: 'avgFeasiScore', title: '可行性', icon: '🔧' },
-                  { key: 'avgOutputScore', title: '预期成果', icon: '📈' }
+                  {
+                    key: 'avgDataScore',
+                    title: 'Data（数据质量）',
+                    icon: (
+                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                      </svg>
+                    ),
+                    color: '#5fb3b3'
+                  },
+                  {
+                    key: 'avgInfoScore',
+                    title: 'Information（信息处理）',
+                    icon: (
+                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    ),
+                    color: '#7ec699'
+                  },
+                  {
+                    key: 'avgKnowScore',
+                    title: 'Knowledge（知识构建）',
+                    icon: (
+                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                      </svg>
+                    ),
+                    color: '#d4a853'
+                  },
+                  {
+                    key: 'avgInsightScore',
+                    title: 'Insight（洞察智慧）',
+                    icon: (
+                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                      </svg>
+                    ),
+                    color: '#c53d43'
+                  }
                 ].map((dim) => {
                   const sorted = [...results]
                     .sort((a, b) => ((b[dim.key as keyof Result] as number) || 0) - ((a[dim.key as keyof Result] as number) || 0))
@@ -391,7 +425,9 @@ export default function LiveRanking() {
                   return (
                     <div key={dim.key} className="bg-[var(--color-ink-light)] border border-[var(--color-ink-soft)] rounded-2xl p-6 relative overflow-hidden">
                       <div className="flex items-center gap-3 mb-6 relative z-10">
-                        <span className="text-3xl">{dim.icon}</span>
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${dim.color}20`, color: dim.color }}>
+                          {dim.icon}
+                        </div>
                         <h3 className="text-xl font-bold text-[var(--color-text-primary)]">{dim.title}</h3>
                       </div>
 
