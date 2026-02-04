@@ -10,7 +10,7 @@ const MOCK_PROJECTS = [
     { name: "碳达峰碳中和路径与政策研究", department: "绿色经济研究所", presenter: "赵六", description: "双碳目标下的绿色转型策略" },
     { name: "先进材料产业发展规划研究", department: "新材料产业研究所", presenter: "钱七", description: "新材料产业布局与技术攻关方向" },
     { name: "深圳海洋经济高质量发展研究", department: "海洋经济研究所", presenter: "孙八", description: "海洋经济新兴产业培育与发展" },
-    { name: "低空经济产业发展与基础设施规划", department: "重大科技基础设施部 (低空经济研究中心)", presenter: "周九", description: "低空经济应用场景与基础设施建设" },
+    { name: "低空经济产业发展与基础设施规划", department: "重大科技基础设施部(低空经济研究所)", presenter: "周九", description: "低空经济应用场景与基础设施建设" },
     { name: "科技创新政策体系优化研究", department: "创新发展部", presenter: "吴十", description: "科技创新政策评估与优化建议" },
     { name: "轨道交通TOD综合开发模式研究", department: "轨道交通与城市发展研究所", presenter: "郑一", description: "轨道交通沿线城市更新与开发" },
     { name: "深圳经济运行监测预警体系研究", department: "经济运行研究所", presenter: "冯二", description: "经济运行监测指标与预警机制" },
@@ -42,10 +42,10 @@ export async function POST() {
             where: { key: 'current_project' }
         })
 
-        // 创建模拟项目
-        for (const project of MOCK_PROJECTS) {
-            await prisma.project.create({ data: project })
-        }
+        // 创建模拟项目（批量插入避免事务超时）
+        await prisma.project.createMany({
+            data: MOCK_PROJECTS
+        })
 
         return NextResponse.json({
             success: true,

@@ -26,7 +26,7 @@ async function main() {
     { id: "09", name: "绿色经济研究所", role: "DEPT_HEAD", department: "绿色经济研究所", passcode: "1234" },
     { id: "10", name: "新材料产业研究所", role: "DEPT_HEAD", department: "新材料产业研究所", passcode: "1234" },
     { id: "11", name: "海洋经济研究所", role: "DEPT_HEAD", department: "海洋经济研究所", passcode: "1234" },
-    { id: "12", name: "重大科技基础设施部", role: "DEPT_HEAD", department: "重大科技基础设施部", passcode: "1234" },
+    { id: "12", name: "重大科技基础设施部(低空经济研究所)", role: "DEPT_HEAD", department: "重大科技基础设施部(低空经济研究所)", passcode: "1234" },
     { id: "13", name: "创新发展部", role: "DEPT_HEAD", department: "创新发展部", passcode: "1234" },
     { id: "14", name: "轨道交通与城市发展研究所", role: "DEPT_HEAD", department: "轨道交通与城市发展研究所", passcode: "1234" },
     { id: "15", name: "经济运行研究所", role: "DEPT_HEAD", department: "经济运行研究所", passcode: "1234" },
