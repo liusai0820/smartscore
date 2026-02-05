@@ -63,9 +63,9 @@ export async function POST(request: Request) {
     }
 
     // Conflict of Interest Check
-    if (user.department === project.department) {
+    if (user.department?.trim() === project.department?.trim()) {
       return NextResponse.json(
-        { error: 'Conflict of interest: You cannot score your own department' },
+        { error: '回避原则：您不能给本部门的项目打分' },
         { status: 403 }
       )
     }

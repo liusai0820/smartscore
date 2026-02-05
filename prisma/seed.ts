@@ -17,8 +17,9 @@ async function main() {
   const users = [
     { id: "01", name: "康主任", role: "LEADER", department: "中心领导", passcode: "1234" },
     { id: "02", name: "陈主任", role: "LEADER", department: "中心领导", passcode: "1234" },
-    { id: "03", name: "李主任", role: "LEADER", department: "中心领导", passcode: "1234" },
-    { id: "04", name: "宗总工", role: "LEADER", department: "总工", passcode: "1234" },
+    { id: "03", name: "马书记", role: "LEADER", department: "中心领导", passcode: "1234" },
+    { id: "04", name: "李主任", role: "LEADER", department: "中心领导", passcode: "1234" },
+
     { id: "05", name: "陈总工", role: "LEADER", department: "总工", passcode: "1234" },
     { id: "06", name: "数字经济研究所", role: "DEPT_HEAD", department: "数字经济研究所", passcode: "1234" },
     { id: "07", name: "生物经济研究所", role: "DEPT_HEAD", department: "生物经济研究所", passcode: "1234" },
