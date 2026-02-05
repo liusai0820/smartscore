@@ -3,6 +3,7 @@ import { getCurrentUser, clearSession } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import ProjectCard from '@/components/ui/ProjectCard'
 import AutoRefresher from '@/components/ui/AutoRefresher'
+import { isSameDepartment } from '@/lib/utils'
 
 async function LogoutButton() {
   'use server'
@@ -49,8 +50,10 @@ export default async function DashboardPage() {
   type ScoreData = typeof userScores[number]
   const scoreMap = new Map<string, ScoreData>(userScores.map((s: ScoreData) => [s.projectId, s]))
 
+
+
   // Check if current project is from user's own department
-  const isOwnDepartment = currentProject?.department?.trim() === user.department?.trim()
+  const isOwnDepartment = isSameDepartment(currentProject?.department, user.department)
 
   // Get existing score for current project
   const existingScore: ScoreData | null = currentProjectId ? (scoreMap.get(currentProjectId) ?? null) : null

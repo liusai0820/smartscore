@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
+import { isSameDepartment } from '@/lib/utils'
 
 export async function POST(request: Request) {
   try {
@@ -63,7 +64,7 @@ export async function POST(request: Request) {
     }
 
     // Conflict of Interest Check
-    if (user.department?.trim() === project.department?.trim()) {
+    if (isSameDepartment(user.department, project.department)) {
       return NextResponse.json(
         { error: '回避原则：您不能给本部门的项目打分' },
         { status: 403 }
